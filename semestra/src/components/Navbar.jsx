@@ -10,6 +10,7 @@ const navigation = [
     { name: "CLASSES", href: "/classes", icon: TbCalendarTime },
     { name: "GPA Calculator", href: "/gpaCalculator", icon: ImCalculator },
     { name: "Profile", href: "/profile", icon: FaRegUser },
+    { name: "Login", href: "/login", icon:FaRegUser },
 ];
 
 const Navbar = () => {
@@ -37,6 +38,7 @@ const Navbar = () => {
                         </Link>
                     </div>
                 ))}
+
             </nav>
         </header>
     );
