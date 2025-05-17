@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "title": "Do Homework",
+        "completed": true,
+        "classId": 1
+    },
+    {
+        "id": 2,
+        "title": "Do Homework",
+        "completed": true,
+        "classId": 1
+    },
+    {
+        "id": 3,
+        "title": "Do Homework",
+        "completed": true,
+        "classId": 1
+    },
+    {
+        "id": 4,
+        "title": "Do Homework",
+        "completed": false,
+        "classId": 1
+    },
+    {
+        "id": 5,
+        "title": "Do Homework",
+        "completed": false,
+        "classId": 1
+    },
+    {
+        "id": 6,
+        "title": "Do Homework",
+        "completed": false,
+        "classId": 1
+    }
+]

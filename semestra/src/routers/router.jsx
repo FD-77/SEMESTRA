@@ -2,11 +2,11 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Main from "../pages/main/Main.jsx";
 import Classes from "../pages/classes/Classes.jsx";
+import ClassDetail from "../pages/classDetail/ClassDetail.jsx";
 import GPACalculator from "../pages/gpaCalculator/GPACalculator.jsx";
 import Profile from "../pages/profile/Profile.jsx";
 import Login from "../pages/login/Login.jsx";
 import Register from "../pages/signUp/SignUp.jsx";
-
 
 const router = createBrowserRouter([
     {
@@ -20,6 +20,10 @@ const router = createBrowserRouter([
             {
                 path: "/classes",
                 element: <Classes />,
+            },
+            {
+                path: "/classes/:id",
+                element: <ClassDetail />,
             },
             {
                 path: "/gpaCalculator",
@@ -36,7 +40,7 @@ const router = createBrowserRouter([
             {
                 path: "/register",
                 element: <Register />,
-            }
+            },
         ],
     },
 ]);
