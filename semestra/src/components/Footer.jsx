@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
     return (
-        <footer className="bg-purple-300 text-xl text-white py-10">
+        <footer className="bg-purple-300 text-xl text-white py-10 mt-auto w-full">
             <p>Powered by Semestra</p>
             <p>
                 Copyright &copy; 2025 All Rights Reserved By Sean Jenkins,

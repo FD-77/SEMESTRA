@@ -1,0 +1,411 @@
+.gpa-calculator {
+  max-width:900px;
+  margin: 40px auto;
+}
+
+.gpa-calculator__title {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 40px;
+  color: #241f1f;
+}
+
+.gpa-calculator__tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.gpa-calculator__tab {
+  padding: 12px 24px;
+  border-radius: 9999px;
+  color: white;
+  border: none;
+  font-size: 17.6px;
+}
+
+.gpa-calculator__tab--active {
+  background-color: #e37f5d;
+}
+
+.gpa-calculator__tab--inactive {
+  background-color: #9cad91;
+}
+
+.gpa-calculator__content {
+  background-color: #f5e6d3;
+  padding: 40px;
+  border-radius: 32px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.gpa-calculator__class-selector {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 20;
+}
+
+.gpa-calculator__select {
+  background-color: #e37f5d; /* Tailwind's purple-300 */
+  color: white;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  min-width: 220px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 24px center;
+  background-size: 19.2px;
+  padding-right: 48px;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  z-index: 10;
+}
+
+/* Style the select options and dropdown */
+.gpa-calculator__select option {
+  background-color: #f5e6d3;
+  color: #241f1f;
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+/* Remove default focus outline and add custom one */
+.gpa-calculator__select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(227, 127, 93, 0.5);
+}
+
+/* Override default select dropdown appearance */
+.gpa-calculator__select::-ms-expand {
+  display: none;
+}
+
+.gpa-calculator__select option:checked {
+  background-color: #e37f5d;
+  color: white;
+}
+
+/* Position the dropdown menu */
+.gpa-calculator__select:focus option {
+  color: white;
+  background-color: #e37f5d;
+  padding: 1rem;
+}
+
+/* Webkit (Chrome, Safari) specific styles */
+.gpa-calculator__select::-webkit-listbox {
+  background-color: #f5e6d3;
+  color: #241f1f;
+  border: none;
+  border-radius: 16px;
+  /* Add these properties to move the listbox */
+  position: absolute;
+  top: 50%;
+  left: 100px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Firefox specific styles */
+.gpa-calculator__select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #fff;
+}
+
+.gpa-calculator__select optgroup,
+.gpa-calculator__select option {
+  background-color: #f5e6d3;
+  color: #241f1f;
+}
+
+@supports (-moz-appearance: none) {
+  .gpa-calculator__select {
+    text-indent: 0.5rem;
+  }
+}
+
+.gpa-calculator__input {
+  background-color: #9cad91;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 9999px;
+}
+
+.gpa-calculator__input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.gpa-calculator__button {
+  background-color: #9cad91;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 9999px;
+  transition: opacity 0.2s;
+}
+
+.gpa-calculator__button:hover {
+  opacity: 0.9;
+}
+
+.gpa-calculator__button--remove {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #dc2626;
+    color: white;
+    padding: 16px 32px;
+    border-radius: 9999px;
+    border: none;
+    font-size: 20px;
+}
+
+.gpa-calculator__button--remove::before {
+    content: "-";
+    font-size: 24px;
+    line-height: 1;
+    margin-right: 4px;
+}
+
+.gpa-calculator__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.gpa-calculator__grid-header {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: bold;
+}
+
+.gpa-calculator__grid-col-6 {
+  grid-column: span 6 / span 6;
+}
+
+.gpa-calculator__grid-col-3 {
+  grid-column: span 3 / span 3;
+  text-align: center;
+}
+
+.gpa-calculator__actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 48px;
+    padding: 0 16px;
+    gap: 16px; /* Added consistent gap */
+}
+
+.gpa-calculator__add-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gpa-calculator__header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 8px;
+}
+
+.gpa-calculator__header-item {
+  font-size: 28px;
+  font-weight: 500;
+  text-align: center;
+  color: #241f1f;
+}
+
+.gpa-calculator__row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.gpa-calculator__input--name,
+.gpa-calculator__input--grade,
+.gpa-calculator__input--weight,
+.gpa-calculator__input--credits,
+.gpa-calculator__select--grade {
+  width: 100%;
+}
+
+.gpa-calculator__input--name {
+  background-color: #e37f5d;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  border: none;
+  font-size: 16px;
+  width: 100%;
+}
+
+.gpa-calculator__input--grade,
+.gpa-calculator__input--weight {
+  background-color: #9cad91;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  border: none;
+  font-size: 16px;
+  text-align: center;
+  width: 100%;
+}
+
+.gpa-calculator__button--add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #9cad91;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  border: none;
+  font-size: 20px;
+}
+
+.gpa-calculator__button--save {
+  background-color: #e37f5d;
+  color: white;
+  padding: 16px 48px;
+  border-radius: 9999px;
+  border: none;
+  font-size: 20px;
+}
+
+/* Add specific styles for class selector layout */
+.gpa-calculator__class-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.gpa-calculator__class-selector select,
+.gpa-calculator__class-selector input,
+.gpa-calculator__class-selector button {
+  margin: 0;
+}
+
+/* Style updates for add component text */
+.gpa-calculator__input--name::placeholder {
+  content: "Add Assignment";
+}
+
+.custom-select {
+    position: relative;
+    min-width: 220px;
+}
+
+.custom-select__options {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background-color: #e37f5d;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 30;
+    overflow-y: auto;
+    max-height: calc(3 * (24px + 24px)); /* 3 items * (padding-top + padding-bottom) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.custom-select__options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-select__options::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-select__options::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+}
+
+.custom-select__option {
+    padding: 12px 24px;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s;
+}
+
+.custom-select__option:hover {
+    background-color: #c96b4e;
+    color: white;
+}
+
+.custom-select__option--selected {
+    background-color: #c96b4e;
+    color: white;
+}
+
+.gpa-calculator__button-group {
+    display: flex;
+    gap: 16px; /* Updated to match parent gap */
+}
+
+/* Make sure buttons have consistent padding */
+.gpa-calculator__button--add,
+.gpa-calculator__button--remove,
+.gpa-calculator__button--save {
+    padding: 16px 24px;
+    font-size: 16px;
+    border-radius: 9999px;
+    border: none;
+}
+
+/* Update the grade select styles to match custom select */
+.gpa-calculator__select--grade {
+    background-color: #e37f5d;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 9999px;
+    min-width: 220px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 24px center;
+    background-size: 19.2px;
+    padding-right: 48px;
+    cursor: pointer;
+    position: relative;
+    border: none;
+    z-index: 10;
+}
+
+.gpa-calculator__select--grade:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(227, 127, 93, 0.5);
+}
+
+.gpa-calculator__select--grade option {
+    background-color: #e37f5d;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+/* Update the dropdown appearance */
+.gpa-calculator__select--grade::-webkit-listbox {
+    background-color: #e37f5d;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-top: 8px;
+}
+
+.gpa-calculator__select--grade option:hover,
+.gpa-calculator__select--grade option:checked {
+    background-color: #c96b4e;
+    color: white;
+}
