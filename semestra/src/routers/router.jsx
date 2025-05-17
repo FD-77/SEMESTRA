@@ -4,6 +4,9 @@ import Main from "../pages/main/Main.jsx";
 import Classes from "../pages/classes/Classes.jsx";
 import GPACalculator from "../pages/gpaCalculator/GPACalculator.jsx";
 import Profile from "../pages/profile/Profile.jsx";
+import Login from "../pages/login/Login.jsx";
+import Register from "../pages/signUp/SignUp.jsx";
+
 
 const router = createBrowserRouter([
     {
@@ -26,6 +29,14 @@ const router = createBrowserRouter([
                 path: "/profile",
                 element: <Profile />,
             },
+            {
+                path: "/login",
+                element: <Login />,
+            },
+            {
+                path: "/register",
+                element: <Register />,
+            }
         ],
     },
 ]);
