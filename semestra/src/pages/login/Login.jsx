@@ -87,7 +87,7 @@ const Login = ({setIsLoggedIn}) => {
       </div>
 
       <div className="auth-redirect">
-        Don't have an account yet?&emsp;
+        Don't have an account yet?&nbsp;
         <Link to="/register">Sign up for free</Link>
       </div>
     </>
