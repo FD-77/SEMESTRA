@@ -1,0 +1,68 @@
+[
+    {
+        "id": 1,
+        "classNo": "CSC 47300",
+        "className": "Web Site Design",
+        "term": "2025 Spring Term",
+        "grade": 4.0,
+        "professor": "Prof. Baffour",
+        "classTimes": "Tue: 6:30 PM to 9:00 PM",
+        "room": "NAC 7/306",
+        "bgColor": "bg-red-200"
+    },
+    {
+        "id": 2,
+        "classNo": "CSC 33200",
+        "className": "Operating Systems",
+        "term": "2025 Spring Term",
+        "grade": 4.0,
+        "professor": "Prof. Baffour",
+        "classTimes": "Tue: 6:30 PM to 9:00 PM",
+        "room": "NAC 7/306",
+        "bgColor": "bg-green-200"
+    },
+    {
+        "id": 3,
+        "classNo": "CSC 32200",
+        "className": "Software Engineering",
+        "term": "2025 Spring Term",
+        "grade": 4.0,
+        "professor": "Prof. Baffour",
+        "classTimes": "Tue: 6:30 PM to 9:00 PM",
+        "room": "NAC 7/306",
+        "bgColor": "bg-blue-200"
+    },
+    {
+        "id": 4,
+        "classNo": "CSC 38000",
+        "className": "Computer Security",
+        "term": "2025 Spring Term",
+        "grade": 4.0,
+        "professor": "Prof. Baffour",
+        "classTimes": "Tue: 6:30 PM to 9:00 PM",
+        "room": "NAC 7/306",
+        "bgColor": "bg-yellow-200"
+    },
+    {
+        "id": 5,
+        "classNo": "CSC 36000",
+        "className": "Modern Distribute Computing",
+        "term": "2025 Spring Term",
+        "grade": 4.0,
+        "professor": "Prof. Baffour",
+        "classTimes": "Tue: 6:30 PM to 9:00 PM",
+        "room": "NAC 7/306",
+        "bgColor": "bg-pink-200"
+    },
+    {
+        "id": 6,
+        "classNo": "CSC 44700",
+        "className": "Intro to Machine Learning",
+        "term": "2025 Spring Term",
+        "grade": 4.0,
+        "professor": "Prof. Baffour",
+        "classTimes": "Tue: 6:30 PM to 9:00 PM",
+        "room": "NAC 7/306",
+        "bgColor": "bg-orange-200"
+    }
+]
