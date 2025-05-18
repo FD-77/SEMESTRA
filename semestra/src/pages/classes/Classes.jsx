@@ -43,10 +43,10 @@ const Classes = () => {
 
     return (
         <main>
-            <div className="max-w-full mx-auto my-10">
+            <div className="max-w-7xl mx-auto my-10">
                 <h1 className="text-5xl pb-10">Classes</h1>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-3">
                     {classes.map((item) => (
                         <ClassCard
                             key={item.id}
