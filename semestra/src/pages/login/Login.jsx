@@ -4,8 +4,9 @@ import { MdOutlineVisibilityOff } from "react-icons/md";
 import { MdOutlineVisibility } from "react-icons/md";
 import "./login.css";
 
-const Login = ({setIsLoggedIn}) => {
+const Login = () => {
   const navigate = useNavigate();
+  const { setIsLoggedIn } = useOutletContext(); // Get setIsLoggedIn from context
   const [values, setValues] = useState({ username: '', password: '' });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +28,7 @@ const Login = ({setIsLoggedIn}) => {
         // Save token and user
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        setIsLoggedIn(true);
+        setIsLoggedIn(true); // Update login state
         navigate('/');
       } else {
         setErrors({ form: data.message || 'Login failed' });

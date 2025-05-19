@@ -7,9 +7,8 @@ import { FaRegUser } from "react-icons/fa";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import { BiLogOut } from "react-icons/bi";
 
-const Navbar = () => {
+const Navbar = ({ isLoggedIn }) => {  // Accept isLoggedIn as prop
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const isLoggedIn = localStorage.getItem('token');
 
     const handleLogout = () => {
         localStorage.removeItem('token');
