@@ -19,7 +19,8 @@ const Register = ({ setIsLoggedIn }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic client‐side validation
+    
+    // Basic client-side validation
     const newErrors = {};
     if (!values.username) newErrors.username = "Username is required.";
     if (!values.email) newErrors.email = "Email is required.";
@@ -29,13 +30,33 @@ const Register = ({ setIsLoggedIn }) => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
 
-    // TODO: call your registration API here
-    const success = true;
-    if (success) {
-      localStorage.setItem("isLoggedIn", "true");
-      setIsLoggedIn(true);
-    } else {
-      setErrors({ form: "Registration failed. Please try again." });
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          password: values.password,
+        }),
+      });
+
+      const data = await response.json();
+      console.log('Response:', response);
+      console.log('Data:', data);
+      
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsLoggedIn(true);
+      } else {
+        setErrors({ form: data.message || 'Registration failed' });
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setErrors({ form: 'Network error. Please try again.' });
     }
   };
 

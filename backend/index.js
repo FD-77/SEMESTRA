@@ -1,26 +1,33 @@
 const express = require("express");
-const app = express();
-
 const mongoose = require("mongoose");
+const cors = require("cors");
+require('dotenv').config();
 
-const port = 3000;
+const authRoutes = require("./routes/auth");
 
-async function main() {
-    await mongoose.connect(
-        "mongodb+srv://cwu009:kI8uCd5mf9NiPGrh@cluster0.hkqzwo5.mongodb.net/semestra?retryWrites=true&w=majority&appName=Cluster0"
-    );
+const app = express();
+const port = process.env.PORT || 3000;
 
-    app.get("/", (req, res) => {
-        res.send("Hello World!");
-    });
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("MongoDB connected successfully!");
+    } catch (err) {
+        console.error("MongoDB connection error:", err);
+        process.exit(1);
+    }
 }
 
-main()
-    .then(() => {
-        console.log("Mongodb connect successfully!");
-    })
-    .catch((err) => console.log(err));
+connectDB();
+
+// Routes
+app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });
