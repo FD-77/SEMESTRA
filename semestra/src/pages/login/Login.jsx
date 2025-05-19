@@ -1,42 +1,40 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate, useOutletContext} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { MdOutlineVisibilityOff } from "react-icons/md";
 import { MdOutlineVisibility } from "react-icons/md";
 import "./login.css";
 
 const Login = ({setIsLoggedIn}) => {
-  const[values, setValues] = useState({username: "", password: ""});
-  const[errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const [values, setValues] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  
-  
-  // Syncs the local storage to the logged-in status
-  useEffect(() => {
-    const stored = localStorage.getItem("isLoggedIn");
-    const setIsLoggedIn = stored?.toLowerCase() === "true";
-  }, [setIsLoggedIn]); // Updates when 'isLoggedIn' changes
 
+  const handleInput = (e) =>
+    setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  // TODO: Send Request to backend to sign out a user
-
-  
-  // Sets user name and password to input
-  const handleInput = (event) => {
-    setValues(prev => ({...prev, [event.target.name]: event.target.value }));
-  };
-
-
-  // Handle submission with login
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    
-    // TODO : API should return our boolean
-    const success = true;
-    if (success) {
-      localStorage.setItem("isLoggedIn", JSON.stringify(true));
-      setIsLoggedIn(true);
-    } else {
-      setErrors({ form: "Invalid credentials" });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Save token and user
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsLoggedIn(true);
+        navigate('/');
+      } else {
+        setErrors({ form: data.message || 'Login failed' });
+      }
+    } catch (err) {
+      console.error('Login fetch error:', err);
+      setErrors({ form: 'Network error. Please try again.' });
     }
   };
 
