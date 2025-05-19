@@ -22,6 +22,10 @@ const router = createBrowserRouter([
                 element: <Classes />,
             },
             {
+                path: "/classes/:id",  // Add this route for class details
+                element: <ClassDetail />,
+            },
+            {
                 path: "/gpaCalculator",
                 element: <GPACalculator />,
             },

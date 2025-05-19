@@ -6,31 +6,113 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
         classNo: "",
         className: "",
         term: "",
+        year: new Date().getFullYear().toString(), // Initialize with current year
+        season: "", // Initialize empty
         grade: 4.0,
         professor: "",
-        classTimes: "",
+        schedule: [],
         room: "",
+        credits: "",
         bgColor: "bg-purple-200",
     });
 
     useEffect(() => {
         if (editData) {
-            setFormData(editData);
+            // Parse existing term (e.g., "2024 Spring Term")
+            const termParts = editData.term?.split(' ') || [];
+            const year = termParts[0];
+            const season = termParts[1]?.toLowerCase();
+
+            setFormData({
+                ...editData,
+                year: year || new Date().getFullYear().toString(),
+                season: season || "",
+                schedule: editData.schedule || [],
+            });
         }
     }, [editData]);
 
+    const [scheduleItem, setScheduleItem] = useState({
+        days: [],
+        startTime: "",
+        endTime: "",
+    });
+
+    const daysOfWeek = [
+        { id: "mon", label: "Mon" },
+        { id: "tue", label: "Tue" },
+        { id: "wed", label: "Wed" },
+        { id: "thu", label: "Thu" },
+        { id: "fri", label: "Fri" },
+    ];
+
+    // Add available seasons and years
+    const seasons = [
+        { id: "spring", label: "Spring" },
+        { id: "summer", label: "Summer" },
+        { id: "fall", label: "Fall" },
+        { id: "winter", label: "Winter" }
+    ];
+
+    const years = Array.from({ length: 10 }, (_, i) => {
+        const year = new Date().getFullYear() + i;
+        return { id: year.toString(), label: year.toString() };
+    });
+
+    // Modify handleChange to update term when year or season changes
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData(prev => {
+            const newState = {
+                ...prev,
+                [name]: value
+            };
+            
+            // Update term when year or season changes
+            if (name === 'year' || name === 'season') {
+                newState.term = newState.year && newState.season 
+                    ? `${newState.year} ${newState.season.charAt(0).toUpperCase() + newState.season.slice(1)} Term`
+                    : '';
+            }
+            
+            return newState;
+        });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(formData);
         onClose();
+    };
+
+    const handleDayToggle = (dayId) => {
+        setScheduleItem((prev) => ({
+            ...prev,
+            days: prev.days.includes(dayId)
+                ? prev.days.filter((d) => d !== dayId)
+                : [...prev.days, dayId],
+        }));
+    };
+
+    const handleAddSchedule = () => {
+        if (
+            scheduleItem.days.length &&
+            scheduleItem.startTime &&
+            scheduleItem.endTime
+        ) {
+            setFormData((prev) => ({
+                ...prev,
+                schedule: [...prev.schedule, { ...scheduleItem }],
+            }));
+            setScheduleItem({ days: [], startTime: "", endTime: "" });
+        }
+    };
+
+    const handleRemoveSchedule = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            schedule: prev.schedule.filter((_, i) => i !== index),
+        }));
     };
 
     if (!isOpen) return null;
@@ -81,7 +163,7 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
                             </label>
                             <input
                                 type="text"
-                                name="name"
+                                name="className"
                                 value={formData.className}
                                 onChange={handleChange}
                                 required
@@ -90,16 +172,41 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
-                                Term
+                                Year
                             </label>
-                            <input
-                                type="text"
-                                name="term"
-                                value={formData.term}
+                            <select
+                                name="year"
+                                value={formData.year}
                                 onChange={handleChange}
                                 required
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
-                            />
+                            >
+                                <option value="">Select Year</option>
+                                {years.map(year => (
+                                    <option key={year.id} value={year.id}>
+                                        {year.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Season
+                            </label>
+                            <select
+                                name="season"
+                                value={formData.season}
+                                onChange={handleChange}
+                                required
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                            >
+                                <option value="">Select Season</option>
+                                {seasons.map(season => (
+                                    <option key={season.id} value={season.id}>
+                                        {season.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
@@ -116,19 +223,6 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
-                                Class Times
-                            </label>
-                            <input
-                                type="text"
-                                name="classTimes"
-                                value={formData.classTimes}
-                                onChange={handleChange}
-                                required
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
                                 Room
                             </label>
                             <input
@@ -137,6 +231,21 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
                                 value={formData.room}
                                 onChange={handleChange}
                                 required
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Credits
+                            </label>
+                            <input
+                                type="number"
+                                name="credits"
+                                value={formData.credits}
+                                onChange={handleChange}
+                                required
+                                min="0"
+                                max="6"
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
                             />
                         </div>
@@ -165,6 +274,108 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
                                 />
                             ))}
                         </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="border rounded-lg p-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Class Schedule
+                            </label>
+
+                            {/* Day selector */}
+                            <div className="flex gap-2 mb-3">
+                                {daysOfWeek.map((day) => (
+                                    <button
+                                        key={day.id}
+                                        type="button"
+                                        onClick={() => handleDayToggle(day.id)}
+                                        className={`px-3 py-2 rounded-full ${
+                                            scheduleItem.days.includes(day.id)
+                                                ? "bg-purple-600 text-white"
+                                                : "bg-gray-200 text-gray-700"
+                                        }`}
+                                    >
+                                        {day.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Time inputs */}
+                            <div className="grid grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <label className="block text-sm text-gray-700">
+                                        Start Time
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={scheduleItem.startTime}
+                                        onChange={(e) =>
+                                            setScheduleItem((prev) => ({
+                                                ...prev,
+                                                startTime: e.target.value,
+                                            }))
+                                        }
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-gray-700">
+                                        End Time
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={scheduleItem.endTime}
+                                        onChange={(e) =>
+                                            setScheduleItem((prev) => ({
+                                                ...prev,
+                                                endTime: e.target.value,
+                                            }))
+                                        }
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={handleAddSchedule}
+                                className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                            >
+                                Add Time Slot
+                            </button>
+                        </div>
+
+                        {/* Display schedule items - Add null check */}
+                        {formData.schedule?.length > 0 && (
+                            <div className="space-y-2">
+                                {formData.schedule.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex justify-between items-center bg-gray-50 p-3 rounded-md"
+                                    >
+                                        <span>
+                                            {item.days
+                                                .map(
+                                                    (d) =>
+                                                        daysOfWeek.find(
+                                                            (day) => day.id === d
+                                                        )?.label
+                                                )
+                                                .join(", ")}
+                                            {" "}
+                                            {item.startTime} - {item.endTime}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveSchedule(index)}
+                                            className="text-red-600 hover:text-red-700"
+                                        >
+                                            <IoClose className="size-5" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex justify-end space-x-3 mt-6">

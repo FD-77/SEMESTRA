@@ -5,47 +5,74 @@ import DetailsCard from "./DetailsCard";
 import TaskList from "./TaskList";
 
 const ClassDetail = () => {
-    const { classId } = useParams();
-    const [classData, setClassData] = useState({
-        id: 1,
-        classNo: "CSC 47300",
-        className: "Web Site Design",
-        term: "2025 Spring Term",
-        grade: 4.0,
-        professor: "Prof. Baffour",
-        classTimes: "Tue: 6:30 PM to 9:00 PM",
-        room: "NAC 7/306",
-        bgColor: "bg-red-200",
-    });
+    const { id } = useParams();
+    const [classData, setClassData] = useState(null);
+    const [tasks, setTasks] = useState([]);
 
-    const [tasks, setTasks] = useState([
-        { id: 1, title: "Do Homework", completed: true, classId: 1 },
-        { id: 2, title: "Do Homework", completed: true, classId: 1 },
-        { id: 3, title: "Do Homework", completed: true, classId: 1 },
-        { id: 4, title: "Do Homework", completed: false, classId: 1 },
-        { id: 5, title: "Do Homework", completed: false, classId: 1 },
-        { id: 6, title: "Do Homework", completed: false, classId: 1 },
-    ]);
+    const formatTime = (time) => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const standardHour = hour % 12 || 12;
+        return `${standardHour}:${minutes} ${ampm}`;
+    };
 
-    useEffect(() => {}, [classId]);
+    useEffect(() => {
+        const fetchClassData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3000/api/classes/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const formattedClass = {
+                        ...data,
+                        classTimes: data.schedule?.map(slot => {
+                            const days = slot.days.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(", ");
+                            const formattedStart = formatTime(slot.startTime);
+                            const formattedEnd = formatTime(slot.endTime);
+                            return `${days}: ${formattedStart} to ${formattedEnd}`;
+                        }).join(" | ")
+                    };
+                    setClassData(formattedClass);
+                }
+            } catch (error) {
+                console.error('Error fetching class:', error);
+            }
+        };
+
+        fetchClassData();
+        
+        // Load tasks for this class
+        const storedTasks = JSON.parse(localStorage.getItem(`tasks_${id}`) || '[]');
+        setTasks(storedTasks);
+    }, [id]);
 
     const handleToggleTask = (taskId) => {
-        setTasks(
-            tasks.map((task) =>
-                task.id === taskId
-                    ? { ...task, completed: !task.completed }
-                    : task
-            )
+        const updatedTasks = tasks.map((task) =>
+            task.id === taskId
+                ? { ...task, completed: !task.completed }
+                : task
         );
+        setTasks(updatedTasks);
+        localStorage.setItem(`tasks_${id}`, JSON.stringify(updatedTasks));
     };
 
     const handleUpdateTasks = (updatedTasks) => {
         setTasks(updatedTasks);
+        localStorage.setItem(`tasks_${id}`, JSON.stringify(updatedTasks));
     };
 
     const handleDeleteTask = (taskId) => {
-        setTasks(tasks.filter((task) => task.id !== taskId));
+        const updatedTasks = tasks.filter((task) => task.id !== taskId);
+        setTasks(updatedTasks);
+        localStorage.setItem(`tasks_${id}`, JSON.stringify(updatedTasks));
     };
+
+    if (!classData) return <div>Loading...</div>;
 
     return (
         <div className="max-w-7xl mx-auto p-4 md:p-8">

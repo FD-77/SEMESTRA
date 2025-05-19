@@ -10,7 +10,7 @@ const TaskList = ({ tasks, onToggle, onUpdate, onDelete }) => {
     const handleAddTask = () => {
         if (newTaskTitle.trim()) {
             const newTask = {
-                id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+                _id: new Date().getTime(),
                 title: newTaskTitle,
                 completed: false
             };
@@ -98,4 +98,4 @@ const TaskList = ({ tasks, onToggle, onUpdate, onDelete }) => {
     );
 };
 
-export default TaskList; 
+export default TaskList;

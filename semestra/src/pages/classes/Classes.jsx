@@ -8,20 +8,87 @@ const Classes = () => {
     const [editingClass, setEditingClass] = useState(null);
 
     useEffect(() => {
-        fetch("classes.json")
-            .then((res) => res.json())
-            .then((data) => setClasses(data));
+        const fetchClasses = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:3000/api/classes', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    setClasses(data);
+                }
+            } catch (error) {
+                console.error('Error fetching classes:', error);
+            }
+        };
+        fetchClasses();
     }, []);
 
-    const handleDeleteClass = (id) => {
+    const handleDeleteClass = async (id) => {
         if (window.confirm("Are you sure you want to delete this class?")) {
-            setClasses(classes.filter((item) => item.id !== id));
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3000/api/classes/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    setClasses(classes.filter(cls => cls._id !== id));
+                }
+            } catch (error) {
+                console.error('Error deleting class:', error);
+            }
         }
     };
 
-    const handleEditClass = (classData) => {};
+    const handleEditClass = async (classData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:3000/api/classes/${classData._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(classData)
+            });
+            const updatedClass = await response.json();
+            if (response.ok) {
+                setClasses(classes.map(cls => 
+                    cls._id === updatedClass._id ? updatedClass : cls
+                ));
+                setIsModalOpen(false);
+            }
+        } catch (error) {
+            console.error('Error updating class:', error);
+        }
+    };
 
-    const handleAddClass = (classData) => {};
+    const handleAddClass = async (classData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/classes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(classData)
+            });
+            const newClass = await response.json();
+            if (response.ok) {
+                setClasses([...classes, newClass]);
+                setIsModalOpen(false);
+            }
+        } catch (error) {
+            console.error('Error adding class:', error);
+        }
+    };
 
     const openModal = (classData = null) => {
         setEditingClass(classData);
@@ -35,7 +102,7 @@ const Classes = () => {
 
     const handleModalSubmit = (classData) => {
         if (editingClass) {
-            handleEditClass({ ...classData, id: editingClass.id });
+            handleEditClass(classData);
         } else {
             handleAddClass(classData);
         }
@@ -49,7 +116,7 @@ const Classes = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-3">
                     {classes.map((item) => (
                         <ClassCard
-                            key={item.id}
+                            key={item._id} // Changed from item.id
                             classData={item}
                             onEditClass={openModal}
                             onDeleteClass={handleDeleteClass}

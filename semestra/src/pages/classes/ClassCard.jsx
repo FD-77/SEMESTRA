@@ -17,11 +17,11 @@ const ClassCard = ({ classData, onEditClass, onDeleteClass }) => {
 
                 <TbTrash
                     className="size-10 cursor-pointer hover:text-red-600"
-                    onClick={() => onDeleteClass(classData.id)}
+                    onClick={() => onDeleteClass(classData._id)}
                 />
             </div>
 
-            <Link to={`/classes/${classData.id}`} className="">
+            <Link to={`/classes/${classData._id}`} className="">
                 <p className="text-3xl text-gray-800 font-bold">
                     {classData.classNo}
                 </p>

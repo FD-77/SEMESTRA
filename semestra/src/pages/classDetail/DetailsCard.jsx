@@ -21,6 +21,9 @@ const DetailsCard = ({ details }) => {
                     <strong>Room:</strong> {details.room}
                 </p>
                 <p>
+                    <strong>Credits:</strong> {details.credits}
+                </p>
+                <p>
                     <strong>Term:</strong> {details.term}
                 </p>
             </div>

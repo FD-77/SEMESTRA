@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import "./GPACalculator.css";
-import CustomSelect from './CustomSelect';
+import CustomSelect from "../../components/CustomSelect"; // Updated import path
 
 const gradeOptions = [
     { id: '4.0', name: 'A' },
