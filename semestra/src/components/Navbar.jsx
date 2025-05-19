@@ -21,7 +21,7 @@ const Navbar = () => {
             <nav className="p-4">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <Link to="/" className="flex items-center space-x-2">
-                        <GiThreeLeaves className="inline-block size-8 md:size-12 text-purple-300" />
+                        <GiThreeLeaves className="inline-block size-8 md:size-12 text-[#CAAACD]" />
                         <span className="text-xl md:text-3xl font-bold font-mono">
                             SEMESTRA
                         </span>
@@ -45,7 +45,7 @@ const Navbar = () => {
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className="flex items-center space-x-2 px-6 py-4 bg-purple-300 text-white rounded-full hover:bg-purple-400"
+                                className="flex items-center space-x-2 px-6 py-4 bg-[#CAAACD] text-white rounded-full hover:bg-purple-300"
                             >
                                 <item.icon className="inline-block size-12" />
                                 <span className="text-2xl font-bold">
@@ -64,7 +64,7 @@ const Navbar = () => {
                                 key={item.name}
                                 to={item.href}
                                 onClick={() => setIsMenuOpen(false)}
-                                className="flex items-center space-x-2 px-4 py-3 bg-purple-300 text-white rounded-full hover:bg-purple-400 transition-colors"
+                                className="flex items-center space-x-2 px-4 py-3 bg-[#CAAACD] text-white rounded-full hover:bg-purple-300 transition-colors"
                             >
                                 <item.icon className="inline-block size-6" />
                                 <span className="text-lg font-bold">
