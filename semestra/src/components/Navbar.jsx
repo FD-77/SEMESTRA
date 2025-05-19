@@ -5,16 +5,36 @@ import { TbCalendarTime } from "react-icons/tb";
 import { ImCalculator } from "react-icons/im";
 import { FaRegUser } from "react-icons/fa";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
-
-const navigation = [
-    { name: "CLASSES", href: "/classes", icon: TbCalendarTime },
-    { name: "GPA Calculator", href: "/gpaCalculator", icon: ImCalculator },
-    { name: "Profile", href: "/profile", icon: FaRegUser },
-    { name: "Login", href: "/login", icon: FaRegUser },
-];
+import { BiLogOut } from "react-icons/bi";
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const isLoggedIn = localStorage.getItem('token');
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+    };
+
+    // Public routes - always visible
+    const baseNavigation = [
+        { name: "CLASSES", href: "/classes", icon: TbCalendarTime },
+        { name: "GPA Calculator", href: "/gpaCalculator", icon: ImCalculator },
+    ];
+
+    // Auth-dependent routes
+    const authNavigation = isLoggedIn 
+        ? [
+            { name: "Profile", href: "/profile", icon: FaRegUser },
+            { name: "Sign Out", href: "#", icon: BiLogOut, onClick: handleLogout }
+        ]
+        : [
+            { name: "Login", href: "/login", icon: FaRegUser },
+            { name: "Sign Up", href: "/register", icon: FaRegUser }
+        ];
+
+    const navigation = [...baseNavigation, ...authNavigation];
 
     return (
         <header className="relative">
@@ -45,6 +65,7 @@ const Navbar = () => {
                             <Link
                                 key={item.name}
                                 to={item.href}
+                                onClick={item.onClick}
                                 className="flex items-center space-x-2 px-6 py-4 bg-[#CAAACD] text-white rounded-full hover:bg-purple-300"
                             >
                                 <item.icon className="inline-block size-12" />
@@ -63,7 +84,10 @@ const Navbar = () => {
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                onClick={() => setIsMenuOpen(false)}
+                                onClick={(e) => {
+                                    setIsMenuOpen(false);
+                                    item.onClick && item.onClick(e);
+                                }}
                                 className="flex items-center space-x-2 px-4 py-3 bg-[#CAAACD] text-white rounded-full hover:bg-purple-300 transition-colors"
                             >
                                 <item.icon className="inline-block size-6" />
