@@ -2,7 +2,7 @@ import {Link, useNavigate, useOutletContext} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { MdOutlineVisibilityOff } from "react-icons/md";
 import { MdOutlineVisibility } from "react-icons/md";
-import "./login.css";
+import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
