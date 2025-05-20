@@ -28,6 +28,7 @@ const ClassDetail = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    // We don't need to convert grade since it's already a letter grade in the database
                     const formattedClass = {
                         ...data,
                         classTimes: data.schedule?.map(slot => {

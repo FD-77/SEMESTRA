@@ -22,8 +22,8 @@ const classSchema = new mongoose.Schema({
         required: true
     },
     grade: {
-        type: Number,
-        default: 4.0
+        type: String,  // Changed from Number to String
+        default: 'A'   // Default value changed to letter grade
     },
     professor: {
         type: String,
@@ -50,7 +50,18 @@ const classSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    categories: [{
+        id: String,
+        name: String,
+        weight: Number
+    }],
+    assignments: [{
+        id: String,
+        name: String,
+        category: String,
+        grade: Number
+    }]
 }, {
     timestamps: true
 });

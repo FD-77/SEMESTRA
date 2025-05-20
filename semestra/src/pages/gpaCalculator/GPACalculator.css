@@ -1,5 +1,5 @@
 .gpa-calculator {
-  max-width:900px;
+  max-width:1000px;
   margin: 40px auto;
 }
 
@@ -260,15 +260,11 @@
 }
 
 .gpa-calculator__button--add {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background-color: #9cad91;
-  color: white;
-  padding: 16px 32px;
-  border-radius: 9999px;
-  border: none;
-  font-size: 20px;
+  gap: 0.5rem;
+  white-space: nowrap;
+  height: 100%;
 }
 
 .gpa-calculator__button--save {
@@ -278,6 +274,40 @@
   border-radius: 9999px;
   border: none;
   font-size: 20px;
+}
+
+/* Add specific styles for semester GPA fields */
+.gpa-calculator__semester-field {
+    padding: 16px 32px;
+    border-radius: 9999px;
+    border: none;
+    font-size: 1.5rem;  /* Larger font size */
+    text-align: center;
+    width: 100%;
+    background-color: #e37f5d;
+    color: white;
+}
+
+.gpa-calculator__semester-credits {
+  padding: 16px 32px;
+  border-radius: 9999px;
+  border: none;
+  font-size: 1.5rem;  /* Larger font size */
+  text-align: center;
+  width: 100%;
+  background-color: #9cad91;
+  color: white;
+}
+
+.gpa-calculator__semester-grade {
+  padding: 16px 32px;
+  border-radius: 9999px;
+  border: none;
+  font-size: 1.5rem;  /* Larger font size */
+  text-align: center;
+  width: 100%;
+  background-color: #CAAACD;
+  color: white;
 }
 
 /* Add specific styles for class selector layout */
@@ -409,3 +439,60 @@
     background-color: #c96b4e;
     color: white;
 }
+
+.gpa-calculator__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Modal Styles */
+.fixed {
+    position: fixed;
+}
+
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.bg-black {
+    background-color: rgba(0, 0, 0, 0.5); /* Combined background-color and opacity */
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+/* Prevent scrolling when modal is open */
+.modal-open {
+    overflow: hidden;
+}
+
+.gpa-calculator__weight-display {
+    background-color: #CAAACD; /* purple-200 equivalent */
+    padding: 0.75rem 1.5rem; /* py-3 px-6 equivalent */
+    border-radius: 9999px;
+    text-align: center;
+    width: 100%; /* Fixed width */
+    height: 56px; /* Fixed height to match other inputs */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #ffffff; /* gray-800 for better readability */
+}
+

@@ -29,16 +29,19 @@ router.post('/', auth, async (req, res) => {
 // Update a class
 router.put('/:id', auth, async (req, res) => {
     try {
+        console.log('Updating class grade:', req.params.id, req.body);
         const updatedClass = await Class.findOneAndUpdate(
             { _id: req.params.id, userId: req.user.id },
-            req.body,
+            { $set: req.body },
             { new: true }
         );
         if (!updatedClass) {
             return res.status(404).json({ message: 'Class not found' });
         }
+        console.log('Updated class:', updatedClass);
         res.json(updatedClass);
     } catch (err) {
+        console.error('Error updating class:', err);
         res.status(400).json({ message: err.message });
     }
 });
@@ -72,6 +75,47 @@ router.get('/:id', auth, async (req, res) => {
         }
         
         res.json(classData);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Update class categories and assignments
+router.put('/:id/gpa-data', auth, async (req, res) => {
+    try {
+        const { categories, assignments } = req.body;
+        const updatedClass = await Class.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            { categories, assignments },
+            { new: true }
+        );
+        
+        if (!updatedClass) {
+            return res.status(404).json({ message: 'Class not found' });
+        }
+        
+        res.json(updatedClass);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Get class GPA data
+router.get('/:id/gpa-data', auth, async (req, res) => {
+    try {
+        const classData = await Class.findOne({
+            _id: req.params.id,
+            userId: req.user.id
+        });
+        
+        if (!classData) {
+            return res.status(404).json({ message: 'Class not found' });
+        }
+        
+        res.json({
+            categories: classData.categories || [],
+            assignments: classData.assignments || []
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
