@@ -97,21 +97,21 @@ router.patch('/checklist/:id/toggle', auth, async(req, res)=>{
     }
 })
 
-//Change Task Name
-router.patch('/checklist/:id/name', auth, async(req, res)=>{
-    const {taskname}= req.body;
-    try{
+// Update task name
+router.patch('/checklist/:id/name', auth, async(req, res) => {
+    const { taskname } = req.body;
+    try {
         const updatedTask = await SemChecklist.findOneAndUpdate(
-            {_id: req.params.id, userID: req.user.id},
-            {taskname},
-            {new: true}
+            { _id: req.params.id, userId: req.user.id }, // Fixed: userID -> userId to match schema
+            { taskname },
+            { new: true }
         );
-        if (!updatedTask){
-            return res.status(404).json({message: "Task not found"});
+        if (!updatedTask) {
+            return res.status(404).json({ message: "Task not found" });
         }
         res.json(updatedTask);
-    } catch (err){
-        res.status(500).json({message: "Error updating task name"});
+    } catch (err) {
+        res.status(500).json({ message: "Error updating task name" });
     }
-})
+});
 module.exports = router;

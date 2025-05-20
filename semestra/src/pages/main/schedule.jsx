@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import CustomSelect from "../../components/CustomSelect";  // Add this import
 
 const seasons = [
     { id: 'spring', name: 'Spring' },
@@ -189,50 +190,39 @@ useEffect(() => {
   const visibleSchedule = schedule.slice(firstClassIndex);
   return (
       <>
-      {/* Add semester selector */}
-      <div className="flex gap-4 mb-4">
-    <select 
+      {/* Update semester selector */}
+      <div className="grid grid-cols-2 gap-4 mb-4 w-full mx-auto">
+    <CustomSelect 
+        options={years}
         value={selectedYear}
-        onChange={(e) => {
-            setSelectedYear(e.target.value);
-            if (selectedSeason && e.target.value) {
+        onChange={(value) => {
+            setSelectedYear(value);
+            if (selectedSeason && value) {
                 const seasonName = seasons.find(s => s.id === selectedSeason)?.name;
-                onSemesterChange(e.target.value, seasonName);
+                onSemesterChange(value, seasonName);
             }
         }}
-        className="flex-1 p-2 border rounded-md text-gray-700"
-    >
-        <option value="">Select Year</option>
-        {years.map(year => (
-            <option key={year.id} value={year.id}>
-                {year.name}
-            </option>
-        ))}
-    </select>
-    <select
+        placeholder="Select Year"
+        className="px-12 py-3" // Add padding to make buttons wider
+    />
+    <CustomSelect
+        options={seasons}
         value={selectedSeason}
-        onChange={(e) => {
-            setSelectedSeason(e.target.value);
-            if (selectedYear && e.target.value) {
-                // Find the season object and use its name instead of id
-                const seasonName = seasons.find(s => s.id === e.target.value)?.name;
+        onChange={(value) => {
+            setSelectedSeason(value);
+            if (selectedYear && value) {
+                const seasonName = seasons.find(s => s.id === value)?.name;
                 onSemesterChange(selectedYear, seasonName);
             }
         }}
-        className="flex-1 p-2 border rounded-md text-gray-700"
-    >
-        <option value="">Select Season</option>
-        {seasons.map(season => (
-            <option key={season.id} value={season.id}>
-                {season.name}
-            </option>
-        ))}
-    </select>
+        placeholder="Select Season"
+        className="px-12 py-3" // Add padding to make buttons wider
+    />
 </div>
-
+    
       {/* Existing table code */}
-      <div className='overflow-x-auto rounded-lg shadow-md'>
-  <table className="min-w-full leading-normal">
+      <div className='overflow-x-auto rounded-lg shadow-md'> {/* Removed -ml-16 */}
+  <table className="w-full table-fixed leading-normal"> {/* Changed min-w-full to w-full and added table-fixed */}
       <thead>
           <tr className="bg-gray-100 text-gray-700">
               <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">Time</th>
