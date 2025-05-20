@@ -86,7 +86,6 @@ const Main = () => {
     }
   };
 
-
 //Add a Task
   const addATask= async ()=>{
     if (newTask.length<1){
