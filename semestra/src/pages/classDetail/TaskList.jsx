@@ -67,9 +67,10 @@ const TaskList = ({ tasks, onToggle, onUpdate, onDelete, classId }) => {
 
                 if (response.ok) {
                     const updatedTask = await response.json();
-                    onUpdate(tasks.map(task =>
+                    const updatedTasks = tasks.map(task =>
                         task._id === updatedTask._id ? updatedTask : task
-                    ));
+                    );
+                    onUpdate(updatedTask);
                     setEditingTask(null);
                     setError("");
                 } else {

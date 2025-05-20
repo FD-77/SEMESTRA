@@ -32,7 +32,6 @@ const ClassDetail = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setClassData(data);
-                    setError("");
                 } else {
                     setError("Failed to load class details");
                 }
@@ -82,9 +81,10 @@ const ClassDetail = () => {
 
             if (response.ok) {
                 const updatedTask = await response.json();
-                setTasks(tasks.map(task => 
+                setTasks(prevTasks => prevTasks.map(task => 
                     task._id === taskId ? updatedTask : task
                 ));
+                setError("");
             } else {
                 setError("Failed to update task");
             }
@@ -108,9 +108,16 @@ const ClassDetail = () => {
 
             if (response.ok) {
                 const updatedTaskData = await response.json();
-                setTasks(prevTasks => prevTasks.map(task => 
-                    task._id === updatedTaskData._id ? updatedTaskData : task
-                ));
+                setTasks(prevTasks => {
+                    const taskExists = prevTasks.some(task => task._id === updatedTaskData._id);
+                    if (taskExists) {
+                        return prevTasks.map(task => 
+                            task._id === updatedTaskData._id ? updatedTaskData : task
+                        );
+                    } else {
+                        return [...prevTasks, updatedTaskData];
+                    }
+                });
                 setError("");
             } else {
                 setError("Failed to update task");

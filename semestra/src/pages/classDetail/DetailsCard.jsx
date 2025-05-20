@@ -2,6 +2,7 @@ import React from "react";
 
 const DetailsCard = ({ details }) => {
     const formatTime = (time) => {
+        if (!time) return "";
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours);
         const ampm = hour >= 12 ? 'PM' : 'AM';
@@ -10,14 +11,19 @@ const DetailsCard = ({ details }) => {
     };
 
     const formatSchedule = (schedule) => {
-        if (!schedule || !Array.isArray(schedule)) return "No schedule available";
+        if (!schedule || !Array.isArray(schedule) || schedule.length === 0) {
+            return "No schedule available";
+        }
         
         return schedule.map((slot, index) => {
+            if (!slot.days || !slot.startTime || !slot.endTime) {
+                return "";
+            }
             const days = slot.days.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(", ");
             const startTime = formatTime(slot.startTime);
             const endTime = formatTime(slot.endTime);
             return `${days}: ${startTime} - ${endTime}`;
-        }).join(" | ");
+        }).filter(Boolean).join(" | ");
     };
 
     return (
