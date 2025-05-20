@@ -179,7 +179,7 @@ useEffect(() => {
   return (
       <>
       {/* Update semester selector */}
-      <div className="grid grid-cols-2 gap-4 mb-4 w-full mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 w-full mx-auto">
     <CustomSelect 
         options={years}
         value={selectedYear}
@@ -210,7 +210,7 @@ useEffect(() => {
     
       {/* Existing table code */}
       <div className='overflow-x-auto rounded-lg shadow-md'> {/* Removed -ml-16 */}
-  <table className="w-full table-fixed leading-normal"> {/* Changed min-w-full to w-full and added table-fixed */}
+  <table className="min-w-[900px] w-full table-fixed text-xs sm:text-sm"> {/* Changed min-w-full to w-full and added table-fixed */}
       <thead>
           <tr className="bg-gray-100 text-gray-700">
               <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">Time</th>

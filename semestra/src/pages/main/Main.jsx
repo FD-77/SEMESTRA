@@ -267,11 +267,11 @@ const Main = () => {
       {/* Left side - Reduced from w-1/3 to w-1/4 */}
       <div className="w-1/4 pr-3 flex flex-col gap-3">
         {/* Cumulative GPA */}
-        <div className="rounded-lg bg-[#F1DFB6] min-h-[150px] h-[180px] p-4">
-          <h1 className="text-[#EF601E] font-bold text-xl mb-2">CUMULATIVE GPA</h1> {/* Reduced text size */}
+        <div className="rounded-lg bg-[#F1DFB6] min-h-[150px] h-[180px] p-4 w-full">
+          <h1 className="text-[#EF601E] font-bold text-base sm:text-xl mb-2 text-center sm:text-left truncate w-full overflow-hidden whitespace-nowrap">CUMULATIVE GPA</h1> {/* Reduced text size */}
           <div className="flex items-center justify-center h-[calc(180px-4rem)]">
-            <div className="bg-white rounded-full h-24 w-24 flex items-center justify-center shadow-md"> {/* Reduced circle size */}
-              <div className="text-3xl font-bold text-[#EF601E]"> {/* Reduced text size */}
+            <div className="bg-white rounded-full h-20 w-20 sm:h-24 sm:w-24 flex items-center justify-center shadow-md"> {/* Reduced circle size */}
+              <div className="text-2xl sm:text-3xl font-bold text-[#EF601E]"> {/* Reduced text size */}
                 {cumulativeGPA !== 'N/A' ? Number(cumulativeGPA).toFixed(2) : 
                   <div className="text-xl italic text-gray-400">N/A</div>
                 }
@@ -295,8 +295,8 @@ const Main = () => {
         )}
 
         {/* Checklist section */}
-        <div className="rounded-lg bg-[#9AAD82] h-auto">
-          <h1 className="text-[#D6E8F7] font-bold text-xl mt-2">SEMESTER <br /> CHECKLIST</h1> {/* Reduced text size and top margin */}
+        <div className="rounded-lg bg-[#9AAD82] w-full">
+          <h1 className="text-[#D6E8F7] font-bold text-xl mt-2 sm:text-xl mt-2 text-center truncate w-full overflow-hidden whitespace-nowrap">SEMESTER <br className="sm:hidden" /> CHECKLIST</h1> {/* Reduced text size and top margin */}
           <div className="p-5 w-full flex flex-wrap">
             <ul className="w-full text-left">
               {tasks.length > 0 ? tasks.map((task, index) => (
@@ -343,7 +343,7 @@ const Main = () => {
                   )}
                 </li>
               )) : 
-              (<li className="text-xl text-[#D6E8F7] text-center">NO TASKS YET...</li>)
+              (<li className="text-xl text-[#D6E8F7] text-center sm:text-xl text-[#D6E8F7] text-center truncate w-full overflow-hidden whitespace-nowrap">NO TASKS YET...</li>)
               }
             </ul>
         </div>
@@ -353,20 +353,20 @@ const Main = () => {
             <div className="bg-[#ac9cb6] h-/15 w-full rounded-2xl p-1">
                 <div>Add your Task</div>
                 <textarea 
-                    className="resize-none h-full w-full relative bg-amber-50 rounded-xl p-1 focus:outline-none focus:ring-1 focus:ring-[hsl(230,31%,78%)]" 
+                    className="resize-none h-full w-full bg-amber-50 rounded-xl p-2 text-sm sm:text-base focus:ring-[hsl(230,31%,78%)]" 
                     placeholder='Fill out FAFSA..' 
                     value={newTask}
                     onChange={(e)=>setNewTask(e.target.value)}
                 />
-                <div className="flex justify-center gap-2">
-                    <button className="bg-amber-100 w-1/3 rounded-2xl" onClick={addATask}>Add</button>
-                    <button className="bg-amber-100 w-1/3 rounded-2xl" onClick={()=>{openAddTask(false);setNewTask("");}}>Cancel</button>
+                <div className="flex justify-center gap-2 mt-2">
+                    <button className="bg-amber-100 w-1/2 sm:w-1/3 rounded-2xl text-sm sm:text-base" onClick={addATask}>Add</button>
+                    <button className="bg-amber-100 w-1/2 sm:w-1/3 rounded-2xl text-sm sm:text-base" onClick={()=>{openAddTask(false);setNewTask("");}}>Cancel</button>
                 </div>
             </div>
         ) : (
             <button 
                 onClick={()=>openAddTask(true)} 
-                className="bg-[#D6E8F7] rounded-xl w-2/3 mx-10 my-3"
+                className="bg-[#D6E8F7] rounded-xl w-2/3 mx-10 my-3 mx-auto mt-3"
             >
                 ADD A TASK
             </button>
