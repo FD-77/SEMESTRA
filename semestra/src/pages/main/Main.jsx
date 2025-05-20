@@ -183,10 +183,10 @@ const Main = () => {
     <div className="w-full min-h-screen flex flex-wrap px-[5%] relative">
       <div className="w-1/3 pr-3 flex flex-col gap-3">
         {/* Cumulative GPA */}
-        <div className="rounded-lg bg-[#F1DFB6] h-1/3">
-          <h1 className="text-[#EF601E] font-bold text-2xl mt-3">CUMULATIVE GPA</h1>
-          <div className="relative w-full h-48">
-            <div className="absolute inset-0 z-10 flex items-center justify-center text-4xl sm:text-5xl md:text-8xl text-[#EF601E]">
+        <div className="rounded-lg bg-[#F1DFB6] min-h-[200px] h-[200px]">
+          <h1 className="text-[#EF601E] font-bold text-2xl pt-3 px-3">CUMULATIVE GPA</h1>
+          <div className="h-[calc(200px-4rem)] flex items-center justify-center">
+            <div className="text-4xl sm:text-5xl md:text-8xl text-[#EF601E]">
               {cumulativeGPA || <div className="opacity-80 italic drop-shadow-md text-gray-500">NO GPA...</div>}
             </div>
           </div>
@@ -194,11 +194,11 @@ const Main = () => {
 
         {/* Semester GPA - Only show if there's a valid GPA */}
         {semesterGPA !== 'N/A' && selectedTerm && (
-          <div className="rounded-lg bg-[#F1DFB6] h-1/4">
-            <h1 className="text-[#EF601E] font-bold text-2xl mt-3">
+          <div className="rounded-lg bg-[#F1DFB6] min-h-[150px] h-[150px]">
+            <h1 className="text-[#EF601E] font-bold text-2xl pt-3 px-3">
               {selectedTerm}
             </h1>
-            <div className="relative w-full h-24 flex items-center justify-center">
+            <div className="h-[calc(150px-4rem)] flex items-center justify-center">
               <div className="text-4xl text-[#EF601E]">
                 {Number(semesterGPA).toFixed(2)}
               </div>

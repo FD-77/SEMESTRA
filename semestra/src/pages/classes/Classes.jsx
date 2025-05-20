@@ -51,7 +51,10 @@ const Classes = () => {
             const token = localStorage.getItem('token');
             const user = JSON.parse(localStorage.getItem('user'));
             
-            // Ensure userId is included in edit
+            // Get the old class data before updating
+            const oldClass = classes.find(c => c._id === classData._id);
+            
+            // Add userId to edit
             const classWithUserId = {
                 ...classData,
                 userId: user.id
@@ -75,10 +78,91 @@ const Classes = () => {
             setClasses(classes.map(cls => 
                 cls._id === updatedClass._id ? updatedClass : cls
             ));
+
+            // If term changed, calculate GPAs for both old and new terms
+            if (oldClass.term !== updatedClass.term) {
+                // Parse old term
+                const [oldYear, oldSeason] = oldClass.term.split(' ');
+                
+                // Parse new term
+                const [newYear, newSeason] = updatedClass.term.split(' ');
+
+                // Calculate GPA for old semester
+                await calculateAndSaveSemesterGPA(oldYear, oldSeason.toLowerCase());
+
+                // Calculate GPA for new semester
+                await calculateAndSaveSemesterGPA(newYear, newSeason.toLowerCase());
+            }
+
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error updating class:', error);
             alert(error.message || 'Error updating class');
+        }
+    };
+
+    // Add this new helper function
+    const calculateAndSaveSemesterGPA = async (year, season) => {
+        try {
+            const token = localStorage.getItem('token');
+            
+            // Get all classes for this semester
+            const response = await fetch('http://localhost:3000/api/classes', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const allClasses = await response.json();
+                const termToMatch = `${year} ${season.charAt(0).toUpperCase() + season.slice(1)} Term`;
+                const semesterClasses = allClasses.filter(cls => cls.term === termToMatch);
+
+                // Calculate GPA
+                let totalQualityPoints = 0;
+                let totalCredits = 0;
+
+                semesterClasses.forEach(cls => {
+                    if (cls.grade && cls.credits) {
+                        const credits = parseFloat(cls.credits);
+                        const gradePoints = 
+                            cls.grade === 'A' ? 4.0 :
+                            cls.grade === 'A-' ? 3.7 :
+                            cls.grade === 'B+' ? 3.3 :
+                            cls.grade === 'B' ? 3.0 :
+                            cls.grade === 'B-' ? 2.7 :
+                            cls.grade === 'C+' ? 2.3 :
+                            cls.grade === 'C' ? 2.0 :
+                            cls.grade === 'C-' ? 1.7 :
+                            cls.grade === 'D+' ? 1.3 :
+                            cls.grade === 'D' ? 1.0 :
+                            cls.grade === 'F' ? 0.0 : null;
+
+                        if (gradePoints !== null) {
+                            totalQualityPoints += credits * gradePoints;
+                            totalCredits += credits;
+                        }
+                    }
+                });
+
+                const gpa = totalCredits > 0 ? (totalQualityPoints / totalCredits).toFixed(2) : 'N/A';
+
+                // Save semester GPA
+                await fetch('http://localhost:3000/api/semesters', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        year,
+                        season,
+                        semesterGPA: gpa !== 'N/A' ? parseFloat(gpa) : null
+                    })
+                });
+            }
+        } catch (error) {
+            console.error('Error calculating semester GPA:', error);
         }
     };
 
