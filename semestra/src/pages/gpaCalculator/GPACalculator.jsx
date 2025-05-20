@@ -634,13 +634,13 @@ const GPACalculator = () => {
             
             <div className="gpa-calculator__tabs">
                 <button 
-                    className={`gpa-calculator__tab ${activeTab === "class" ? 'gpa-calculator__tab--active' : 'gpa-calculator__tab--inactive'}`}
+                    className={`gpa-calculator__tab cursor-pointer ${activeTab === "class" ? 'gpa-calculator__tab--active' : 'gpa-calculator__tab--inactive'}`}
                     onClick={() => setActiveTab("class")}
                 >
                     Class GPA
                 </button>
                 <button 
-                    className={`gpa-calculator__tab ${activeTab === "semester" ? 'gpa-calculator__tab--active' : 'gpa-calculator__tab--inactive'}`}
+                    className={`gpa-calculator__tab cursor-pointer ${activeTab === "semester" ? 'gpa-calculator__tab--active' : 'gpa-calculator__tab--inactive'}`}
                     onClick={() => setActiveTab("semester")}
                 >
                     Semester GPA
@@ -664,7 +664,7 @@ const GPACalculator = () => {
                         {activeClassId && (
                             <button
                                 onClick={() => setIsAddingCategory(true)}
-                                className="gpa-calculator__button gpa-calculator__button--add whitespace-nowrap"
+                                className="gpa-calculator__button gpa-calculator__button--add whitespace-nowrap cursor-pointer"
                             >
                                 <IoMdAdd className="gpa-calculator__icon" />
                                 Add Category
@@ -681,7 +681,7 @@ const GPACalculator = () => {
                                 onClick={() => setIsAddingCategory(false)}
                                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                             >
-                                <IoClose className="size-6" />
+                                <IoClose className="size-6 cursor-pointer" />
                             </button>
                             
                             <h2 className="text-xl font-semibold mb-4">Add Category</h2>
@@ -714,13 +714,13 @@ const GPACalculator = () => {
                                 <div className="flex justify-end gap-2 mt-6">
                                     <button
                                         onClick={handleAddCategory}
-                                        className="gpa-calculator__button gpa-calculator__button--save"
+                                        className="gpa-calculator__button gpa-calculator__button--save cursor-pointer"
                                     >
                                         Add
                                     </button>
                                     <button
                                         onClick={() => setIsAddingCategory(false)}
-                                        className="gpa-calculator__button gpa-calculator__button--remove"
+                                        className="gpa-calculator__button gpa-calculator__button--remove cursor-pointer"
                                     >
                                         Cancel
                                     </button>
@@ -741,7 +741,7 @@ const GPACalculator = () => {
                                 <span>{category.name} ({category.weight}%)</span>
                                 <button
                                     onClick={() => handleRemoveCategory(category.id)}
-                                    className="text-red-500 hover:text-red-700"
+                                    className="text-red-500 hover:text-red-700 cursor-pointer"
                                 >
                                     <IoClose className="size-5" />
                                 </button>
@@ -811,7 +811,7 @@ const GPACalculator = () => {
                                 </div>
                                 <button
                                     onClick={() => handleRemoveComponent(component.id)}
-                                    className="text-red-500 hover:text-red-700"
+                                    className="text-red-500 hover:text-red-700 cursor-pointer"
                                 >
                                     <IoClose className="size-5" />
                                 </button>
@@ -822,7 +822,7 @@ const GPACalculator = () => {
                         <div className="mt-8 flex items-center justify-between">
                             <button
                                 onClick={handleAddComponent}
-                                className="gpa-calculator__button gpa-calculator__button--add"
+                                className="gpa-calculator__button gpa-calculator__button--add cursor-pointer"
                             >
                                 <IoMdAdd className="gpa-calculator__icon" />
                                 Add Assignment

@@ -7,7 +7,11 @@ import { TbDotsVertical} from "react-icons/tb";
 import Schedule from './schedule';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FiEdit } from "react-icons/fi";
+import { useNavigate } from 'react-router-dom'; // Add this import at the top
+
 const Main = () => {
+  const navigate = useNavigate(); // Add this hook
+  const [hasClasses, setHasClasses] = useState(true); // Add this state
   // Add state for semester GPA
   const [cumulativeGPA, setCumulativeGPA] = useState('N/A');
   const [semesterGPA, setSemesterGPA] = useState('N/A');
@@ -31,6 +35,7 @@ const Main = () => {
     if(token){
         fetchGPAs(); // Now matches the function name
         fetchTasks();
+        checkForClasses(); // Add this line
     }
 }, []);
 
@@ -175,9 +180,43 @@ const Main = () => {
     }
 };
   
+  // Add this function to check for classes
+  const checkForClasses = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/classes', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const classes = await response.json();
+            setHasClasses(classes.length > 0);
+        }
+    } catch (err) {
+        console.error("Error checking classes:", err);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen flex flex-wrap px-[5%] relative">
+      {!hasClasses && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+                        <h2 className="text-2xl font-bold mb-4">No Classes Found</h2>
+                        <p className="text-gray-600 mb-6">
+                            You need to add classes to access the schedule feature.
+                        </p>
+                        <button
+                            onClick={() => navigate('/classes')}
+                            className="bg-[#CAAACD] text-white px-6 py-3 rounded-full cursor-pointer hover:bg-purple-400"
+                        >
+                            Add Classes
+                        </button>
+                    </div>
+                </div>
+            )}
       <div className="w-1/3 pr-3 flex flex-col gap-3">
         {/* Cumulative GPA */}
         <div className="rounded-lg bg-[#F1DFB6] min-h-[200px] h-[200px]">

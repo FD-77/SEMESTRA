@@ -236,7 +236,7 @@ const Classes = () => {
                 </div>
 
                 <button
-                    className="bg-blue-400 hover:bg-blue-500 text-white rounded-full px-6 py-4 text-2xl my-10"
+                    className="bg-blue-400 hover:bg-blue-500 text-white cursor-pointer rounded-full px-6 py-4 text-2xl my-10"
                     onClick={() => openModal()}
                 >
                     Add Class
