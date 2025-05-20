@@ -48,12 +48,7 @@ const Schedule = ({ onSemesterChange }) => {
     { slot: "23:00-23:30", actual: "11:00 PM - 11:30 PM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
     { slot: "23:30-24:00", actual: "11:30 PM - 12:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
     ];
-    const classObj= [
-        {classname: "Computer Organization", startTime: "3:30 pm", endTime: "4:45 pm", days: ["Monday", "Wednesday"]},
-        {classname: "Computer Design", startTime: "6:30 pm", endTime: "7:45pm", days: ["Tuesday", "Thursday"]},
-        {classname: "Senior Project", startTime: "7:30 pm", endTime: "7:45pm", days: ["Friday"]},
-        {classname: "Software Engineering", startTime: "4:15 pm", endTime: "5:30 pm", days: ["Sunday", "Tuesday"]}
-  ];
+ 
 
     const [schedule, editSchedule] = useState(times);
     const [classes, editClasses] =useState([]);
@@ -62,7 +57,11 @@ const Schedule = ({ onSemesterChange }) => {
 
 
     useEffect(()=>{
-        fetchClasses();
+        const token = localStorage.getItem('token');
+        if(token){
+            fetchClasses();
+        }
+        
     }, []);
 
     //get Classes

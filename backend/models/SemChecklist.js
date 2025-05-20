@@ -16,7 +16,7 @@ const semChecklistSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true,
-    collection: 'semtasks'
+    collection: 'semchecklists'
 });
 
 const SemChecklist = mongoose.model('SemChecklist', semChecklistSchema);
