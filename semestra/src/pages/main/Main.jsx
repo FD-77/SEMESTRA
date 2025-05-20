@@ -33,7 +33,7 @@ const Main = () => {
   //GET GPA
   const fetchGPA = async () => {
     try{
-      const response= await fetch('http://localhost:3000/api/gpa',{
+      const response= await fetch('http://localhost:3000/api/mainPage/gpa',{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -41,6 +41,7 @@ const Main = () => {
         }
       });
       if (!response.ok){
+        console.log("!response");
         throw new Error("Failed to fetch GPA");
       }
       const gpaData = await response.json();
