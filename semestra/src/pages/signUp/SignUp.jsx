@@ -1,7 +1,7 @@
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import { MdOutlineVisibilityOff, MdOutlineVisibility } from "react-icons/md";
-import "../login/Login.css"; 
+import "../login/login.css"; 
 
 const Register = () => {
     const { setIsLoggedIn } = useOutletContext();
