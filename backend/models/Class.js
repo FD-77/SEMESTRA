@@ -22,8 +22,8 @@ const classSchema = new mongoose.Schema({
         required: true
     },
     grade: {
-        type: String,  // Changed from Number to String
-        default: 'A'   // Default value changed to letter grade
+        type: String,  // Already String type, good
+        default: null  // Changed from 'A' to null to show N/A by default
     },
     professor: {
         type: String,

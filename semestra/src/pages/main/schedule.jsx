@@ -125,43 +125,31 @@ useEffect(() => {
             if (ampm === 'PM' && hour !== 12) {
                 hour += 12;
             } else if (ampm === 'AM' && hour === 12) {
-                hour = 0; // Midnight
+                hour = 0;
             }
     
-            const startTimeFirstSlot = schedule[0]?.slot?.split('-')[0];
-            const startHourReference = startTimeFirstSlot ? parseInt(startTimeFirstSlot.split(':')[0], 10) : 8;
+            const startHourReference = parseInt(times[0]?.slot?.split('-')[0]?.split(':')[0], 10) || 8;
     
-            let roundedMinute = Math.round(minute / 30) * 30;
-
-            if (roundedMinute === 60) {
-                roundedMinute = 0;
-                hour = (hour + 1) % 24; 
-            }
-
-            const totalMinutes = (hour - startHourReference) * 60 + roundedMinute;
-            const slotIndex = totalMinutes / 30;  // Each slot is 30 minutes
-
-            return slotIndex;
+            // Calculate slots based on 30-minute segments
+            const totalMinutes = (hour - startHourReference) * 60 + minute;
+            return Math.floor(totalMinutes / 30);
         };
     
         classes.forEach(cls => {
-            const {className}=cls;
+            const { className, bgColor } = cls; // Get bgColor from class data
             
-            cls.schedule.forEach(scheduleEntry =>{
+            cls.schedule.forEach(scheduleEntry => {
                 const { startTime, endTime, days } = scheduleEntry; 
                 let startIndex = getSlotIndex(startTime);
                 let endIndex = getSlotIndex(endTime);
-                const [endHourStr] = endTime.split(':');
-                const endHour = parseInt(endHourStr.split(' ')[0], 10);
-                const endMinStr = endTime.split(':')[1]?.substring(0, 2) || '0';
-                const endMin = parseInt(endMinStr, 10);
 
-                if (endMin === 0) {
-                    endIndex -= (endHour > (times[0]?.slot?.split('-')[0]?.split(':')[0] || 8) ? 0 : 0);
-                } else if (endMin === 45) {
-                    endIndex += 1;
-                } else if (endMin === 15) {
-                    endIndex -= 1;
+                // Handle end time minutes properly
+                const [endHourStr, endMinStr] = endTime.split(':');
+                const endMinutes = parseInt(endMinStr.substring(0, 2), 10);
+                
+                // Adjust end index based on minutes
+                if (endMinutes > 0) {
+                    endIndex += 1; // Include the partial slot
                 }
 
                 days.forEach(day => {
@@ -169,10 +157,10 @@ useEffect(() => {
                     for (let i = startIndex; i < endIndex; i++) {
                         if (updatedSchedule[i] && updatedSchedule[i].hasOwnProperty(dayLower)) {
                             if (i === startIndex) {
-                                updatedSchedule[i][dayLower] = [true, className]; // Mark start + store name
+                                updatedSchedule[i][dayLower] = [true, className, bgColor];
                             } 
                             else {
-                                updatedSchedule[i][dayLower] = [className]; // Normal timeslot
+                                updatedSchedule[i][dayLower] = [className, null, bgColor];
                             }
                         }    
                     }
@@ -243,27 +231,44 @@ useEffect(() => {
 ) : (
   visibleSchedule.map((timeSlot, index) => (
       <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">{timeSlot.actual}</th>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.sun[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.sun[1] ? timeSlot.sun[1] : ''} 
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">
+                    {timeSlot.actual}
+                  </th>
+                  {/* Update each day cell to use the class bgColor */}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.sun[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.sun[1] ? 'font-bold ' + timeSlot.sun[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.sun[1] ? timeSlot.sun[1] : ''}
+                    </span>
                   </td>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.mon[0] ? 'bg-yellow-100 text-yellow-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.mon[1] ? timeSlot.mon[1] : ''}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.mon[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.mon[1] ? 'font-bold ' + timeSlot.mon[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.mon[1] ? timeSlot.mon[1] : ''}
+                    </span>
                   </td>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.tue[0] ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.tue[1] ? timeSlot.tue[1] : ''}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.tue[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.tue[1] ? 'font-bold ' + timeSlot.tue[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.tue[1] ? timeSlot.tue[1] : ''}
+                    </span>
                   </td>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.wed[0] ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.wed[1] ? timeSlot.wed[1] : ''}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.wed[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.wed[1] ? 'font-bold ' + timeSlot.wed[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.wed[1] ? timeSlot.wed[1] : ''}
+                    </span>
                   </td>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.thu[0] ? 'bg-teal-100 text-teal-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.thu[1] ? timeSlot.thu[1] : ''}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.thu[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.thu[1] ? 'font-bold ' + timeSlot.thu[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.thu[1] ? timeSlot.thu[1] : ''}
+                    </span>
                   </td>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.fri[0] ? 'bg-red-100 text-red-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.fri[1] ? timeSlot.fri[1] : ''}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.fri[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.fri[1] ? 'font-bold ' + timeSlot.fri[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.fri[1] ? timeSlot.fri[1] : ''}
+                    </span>
                   </td>
-                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.sat[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
-                      {timeSlot.sat[1] ? timeSlot.sat[1] : ''}
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.sat[2] || 'text-gray-600'}`}>
+                    <span className={`${timeSlot.sat[1] ? 'font-bold ' + timeSlot.sat[2].replace('bg-', 'text-').replace('-200', '-700') : ''}`}>
+                        {timeSlot.sat[1] ? timeSlot.sat[1] : ''}
+                    </span>
                   </td>
               </tr>
   ))

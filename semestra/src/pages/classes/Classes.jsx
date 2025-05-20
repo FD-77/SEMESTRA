@@ -7,6 +7,12 @@ const Classes = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingClass, setEditingClass] = useState(null);
 
+    // Add state for delete confirmation
+    const [deleteConfirm, setDeleteConfirm] = useState({
+        show: false,
+        classId: null
+    });
+
     useEffect(() => {
         const fetchClasses = async () => {
             try {
@@ -28,21 +34,20 @@ const Classes = () => {
     }, []);
 
     const handleDeleteClass = async (id) => {
-        if (window.confirm("Are you sure you want to delete this class?")) {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/classes/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                if (response.ok) {
-                    setClasses(classes.filter(cls => cls._id !== id));
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:3000/api/classes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-            } catch (error) {
-                console.error('Error deleting class:', error);
+            });
+            if (response.ok) {
+                setClasses(classes.filter(cls => cls._id !== id));
+                setDeleteConfirm({ show: false, classId: null });
             }
+        } catch (error) {
+            console.error('Error deleting class:', error);
         }
     };
 
@@ -227,10 +232,10 @@ const Classes = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-3">
                     {classes.map((item) => (
                         <ClassCard
-                            key={item._id} // Changed from item.id
+                            key={item._id}
                             classData={item}
                             onEditClass={openModal}
-                            onDeleteClass={handleDeleteClass}
+                            onDeleteClass={(id) => setDeleteConfirm({ show: true, classId: id })}
                         />
                     ))}
                 </div>
@@ -249,6 +254,32 @@ const Classes = () => {
                 onSubmit={handleModalSubmit}
                 editData={editingClass}
             />
+
+            {/* Delete Confirmation Modal */}
+            {deleteConfirm.show && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+                        <h2 className="text-2xl font-bold mb-4">Delete Class</h2>
+                        <p className="text-gray-600 mb-6">
+                            Are you sure you want to delete this class? This action cannot be undone.
+                        </p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={() => setDeleteConfirm({ show: false, classId: null })}
+                                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => handleDeleteClass(deleteConfirm.classId)}
+                                className="px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                            >
+                                Delete Class
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 };

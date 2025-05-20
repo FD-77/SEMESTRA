@@ -31,7 +31,7 @@ const DetailsCard = ({ details }) => {
             <h2 className="text-xl md:text-2xl mb-2 md:mb-4">Class Details</h2>
             <div className="space-y-1 md:space-y-2 text-sm md:text-base text-left">
                 <p>
-                    <strong>Class No.:</strong> {details.classNo}
+                    <strong>Course Number:</strong> {details.classNo}
                 </p>
                 <p>
                     <strong>Class Name:</strong> {details.className}

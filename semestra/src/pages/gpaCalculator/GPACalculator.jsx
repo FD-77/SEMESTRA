@@ -334,10 +334,6 @@ const GPACalculator = () => {
             const token = localStorage.getItem('token');
             const activeClass = classes.find(c => c.id === activeClassId);
             
-            // Log the current data
-            console.log('Current Class:', activeClass);
-            console.log('Current GPA:', classGPA);
-
             const assignments = activeClass?.components.map(comp => ({
                 id: comp.id,
                 name: comp.name,
@@ -345,54 +341,36 @@ const GPACalculator = () => {
                 grade: parseFloat(comp.grade) || 0
             })) || [];
 
-            // Calculate letter grade
-            const letterGrade = classGPA >= 93 ? 'A' :
-                              classGPA >= 90 ? 'A-' :
-                              classGPA >= 87 ? 'B+' :
-                              classGPA >= 83 ? 'B' :
-                              classGPA >= 80 ? 'B-' :
-                              classGPA >= 77 ? 'C+' :
-                              classGPA >= 73 ? 'C' :
-                              classGPA >= 70 ? 'C-' :
-                              classGPA >= 67 ? 'D+' :
-                              classGPA >= 60 ? 'D' : 'F';
+            // Calculate letter grade only if there are assignments with grades
+            const letterGrade = activeClass?.components.length > 0 ? 
+                (classGPA >= 93 ? 'A' :
+                classGPA >= 90 ? 'A-' :
+                classGPA >= 87 ? 'B+' :
+                classGPA >= 83 ? 'B' :
+                classGPA >= 80 ? 'B-' :
+                classGPA >= 77 ? 'C+' :
+                classGPA >= 73 ? 'C' :
+                classGPA >= 70 ? 'C-' :
+                classGPA >= 67 ? 'D+' :
+                classGPA >= 60 ? 'D' : 'F') : '';  // Empty string for no grade
 
-            console.log('Calculated Letter Grade:', letterGrade);
+            // Only update grade if we have a valid letter grade
+            if (letterGrade) {
+                const gradeUpdateResponse = await fetch(`http://localhost:3000/api/classes/${activeClassId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        grade: letterGrade
+                    })
+                });
 
-            // First save categories and assignments
-            const gpaDataResponse = await fetch(`http://localhost:3000/api/classes/${activeClassId}/gpa-data`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    categories,
-                    assignments
-                })
-            });
-
-            console.log('GPA Data Update Response:', await gpaDataResponse.json());
-
-            // Then update the class grade
-            const gradeUpdateResponse = await fetch(`http://localhost:3000/api/classes/${activeClassId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    grade: letterGrade
-                })
-            });
-
-            const gradeUpdateResult = await gradeUpdateResponse.json();
-            console.log('Grade Update Response:', gradeUpdateResult);
-
-            if (!gradeUpdateResponse.ok) {
-                throw new Error('Failed to update grade: ' + gradeUpdateResult.message);
+                if (!gradeUpdateResponse.ok) {
+                    throw new Error('Failed to update grade');
+                }
             }
-
         } catch (error) {
             console.error('Error saving GPA data:', error);
         }

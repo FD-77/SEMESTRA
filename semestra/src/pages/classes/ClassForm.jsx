@@ -6,9 +6,9 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
         classNo: "",
         className: "",
         term: "",
-        year: new Date().getFullYear().toString(), // Initialize with current year
-        season: "", // Initialize empty
-        grade: 4.0,
+        year: new Date().getFullYear().toString(),
+        season: "",
+        grade: "", // Remove default 4.0, leave empty for N/A
         professor: "",
         schedule: [],
         room: "",
@@ -160,7 +160,7 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
-                                Class Number
+                                Course Number
                             </label>
                             <input
                                 type="text"
