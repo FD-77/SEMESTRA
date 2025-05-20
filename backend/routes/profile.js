@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Class = require('../models/Class');
+const Semester = require('../models/Semester');
+const SemChecklist = require('../models/SemChecklist');
 const auth = require('../middleware/auth');
 
 // Get user profile
@@ -91,6 +93,27 @@ router.get('/gpa', auth, async (req, res) => {
         res.json({ gpa: user.gpa || 'N/A' });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+// Delete user account and all associated data
+router.delete('/', auth, async (req, res) => {
+    try {
+        // Delete all associated data
+        await Class.deleteMany({ userId: req.user.id });
+        await Semester.deleteMany({ userId: req.user.id });
+        await SemChecklist.deleteMany({ userId: req.user.id });
+        
+        // Delete the user
+        const deletedUser = await User.findByIdAndDelete(req.user.id);
+        
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        res.json({ message: 'Account successfully deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting account' });
     }
 });
 
