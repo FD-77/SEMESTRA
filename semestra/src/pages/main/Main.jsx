@@ -23,7 +23,7 @@ const Main = () => {
   const[tasks, editTasks] =useState([]);
   const[opentask, openAddTask]=useState(false);
   const[newTask, setNewTask] =useState("");
-  const[editdel, setEdDel]=useState(null);
+  const[editdel, setEdDel]=useState(null); 
 
 
   useEffect(() => {
