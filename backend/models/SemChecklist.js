@@ -15,9 +15,10 @@ const semChecklistSchema = new mongoose.Schema({
         required: true
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    collection: 'semtasks'
 });
 
-const SemChecklist = mongoose.model('SemTask', semChecklistSchema);
+const SemChecklist = mongoose.model('SemChecklist', semChecklistSchema);
 
 module.exports = SemChecklist;
