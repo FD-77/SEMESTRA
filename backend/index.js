@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const authRoutes = require("./routes/auth");
 const classRoutes = require("./routes/classes");
+const mainRoutes = require("./routes/mainPage")
 const profileRoutes = require("./routes/profile");
 const classDetailRoutes = require("./routes/classDetail");
 const taskRoutes = require("./routes/tasks");
@@ -32,6 +33,7 @@ connectDB();
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/classes", classRoutes);
+app.use("/api/mainPage", mainRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/class-detail", classDetailRoutes);
 app.use("/api/tasks", taskRoutes);
