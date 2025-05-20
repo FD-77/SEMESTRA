@@ -51,9 +51,17 @@ const Schedule = ({ onSemesterChange }) => {
  
 
     const [schedule, editSchedule] = useState(times);
-    const [classes, editClasses] =useState([]);
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
-    const [selectedSeason, setSelectedSeason] = useState('');
+    const [classes, editClasses] = useState([]);
+    const [selectedYear, setSelectedYear] = useState('2025'); 
+    const [selectedSeason, setSelectedSeason] = useState('spring');
+
+    // Add this useEffect to trigger initial semester change
+    useEffect(() => {
+        const seasonName = seasons.find(s => s.id === selectedSeason)?.name;
+        if (selectedYear && seasonName) {
+            onSemesterChange(selectedYear, seasonName);
+        }
+    }, []); // Empty dependency array means this runs once on mount
 
 
     useEffect(()=>{

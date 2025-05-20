@@ -12,8 +12,6 @@ const Main = () => {
   const [cumulativeGPA, setCumulativeGPA] = useState('N/A');
   const [semesterGPA, setSemesterGPA] = useState('N/A');
   const [selectedTerm, setSelectedTerm] = useState('');
-  const [selectedSeason, setSelectedSeason] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
 
   const initialTasks=[
     {name: "Complete Fafsa", complete: false},
@@ -28,13 +26,13 @@ const Main = () => {
   const[editdel, setEdDel]=useState(null);
 
 
-  useEffect(()=>{
+  useEffect(() => {
     const token = localStorage.getItem('token');
     if(token){
-        fetchGPA();
+        fetchGPAs(); // Now matches the function name
         fetchTasks();
     }
-    }, []);
+}, []);
 
   //GET GPA
   const fetchGPAs = async () => {
@@ -52,38 +50,8 @@ const Main = () => {
             setCumulativeGPA(cumulativeData.gpa || 'N/A');
         }
 
-        // Get current term
-        const year = new Date().getFullYear();
-        const month = new Date().getMonth();
-        const season = month >= 0 && month < 5 ? 'Spring' :
-                      month >= 5 && month < 8 ? 'Summer' :
-                      month >= 8 && month < 12 ? 'Fall' : 'Winter';
-        
-        setSelectedYear(year);
-        setSelectedSeason(season);
-
-        // Fetch semester GPA
-        const semesterResponse = await fetch('http://localhost:3000/api/semesters', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
-
-        if (semesterResponse.ok) {
-            const semesters = await semesterResponse.json();
-            const currentSemester = semesters.find(sem => 
-                sem.year === year.toString() && 
-                sem.season.toLowerCase() === season.toLowerCase()
-            );
-            
-            // Set semester GPA to N/A if no semester found or no GPA available
-            setSemesterGPA(currentSemester?.semesterGPA ? 
-                currentSemester.semesterGPA.toFixed(2) : 'N/A');
-            setSelectedTerm(`${season} ${year}`);
-        } else {
-            setSemesterGPA('N/A');
-        }
+        setSemesterGPA('N/A');
+        setSelectedTerm('');
     } catch (err) {
         console.error("Error getting GPAs:", err);
         setCumulativeGPA('N/A');
@@ -224,17 +192,19 @@ const Main = () => {
           </div>
         </div>
 
-        {/* Semester GPA */}
-        <div className="rounded-lg bg-[#F1DFB6] h-1/4">
-          <h1 className="text-[#EF601E] font-bold text-2xl mt-3">
-            {selectedTerm || 'SELECT A SEMESTER'}
-          </h1>
-          <div className="relative w-full h-24 flex items-center justify-center">
-            <div className="text-4xl text-[#EF601E]">
-              {selectedTerm && semesterGPA !== 'N/A' ? Number(semesterGPA).toFixed(2) : ''}
+        {/* Semester GPA - Only show if there's a valid GPA */}
+        {semesterGPA !== 'N/A' && selectedTerm && (
+          <div className="rounded-lg bg-[#F1DFB6] h-1/4">
+            <h1 className="text-[#EF601E] font-bold text-2xl mt-3">
+              {selectedTerm}
+            </h1>
+            <div className="relative w-full h-24 flex items-center justify-center">
+              <div className="text-4xl text-[#EF601E]">
+                {Number(semesterGPA).toFixed(2)}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Checklist */}
         <div className="rounded-lg bg-[#9AAD82] h-auto" >
