@@ -71,17 +71,22 @@ router.delete('/deleteFromChecklist/:id', auth, async(req, res) =>{
 //Change Task Complete/!Complete
 router.patch('/checklist/:id/toggle', auth, async(req, res)=>{
     try{
-        const updatedTask = await SemChecklist.findOne({
-            _id: req.params.id, 
-            userID: req.user.id,
-        });
-        if (!updatedTask){
+        const task = await SemChecklist.findOne(
+            { _id: req.params.id, userId: req.user.id}
+            
+        );
+        if (!task){
             return res.status(404).json({message: "Task not found"});
         }
-        updatedTask.completed=!updatedTask.complete;
-        await updatedTask.save();
+        const updatedTask = await SemChecklist.findOneAndUpdate(
+            
+            { _id: req.params.id, userId: req.user.id},
+            {completed: !task.completed},
+            {new: true}
+        );
         res.json(updatedTask);
     } catch (err){
+        console.error(err);
         res.status(500).json({message: "Error updating task"});
     }
 })

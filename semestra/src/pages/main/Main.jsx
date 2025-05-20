@@ -5,7 +5,8 @@ import { RiCheckboxBlankCircleLine } from "react-icons/ri";
 import { RiCheckboxCircleFill } from "react-icons/ri";
 import { TbDotsVertical} from "react-icons/tb";
 import Schedule from './schedule';
-
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { FiEdit } from "react-icons/fi";
 const Main = () => {
 
   const initialTasks=[
@@ -18,32 +19,38 @@ const Main = () => {
   const[tasks, editTasks] =useState([]);
   const[opentask, openAddTask]=useState(false);
   const[newTask, setNewTask] =useState("");
+  const[editdel, setEdDel]=useState(null);
+
 
   useEffect(()=>{
+    const token = localStorage.getItem('token');
+    if(token){
         fetchGPA();
         fetchTasks();
+    }
     }, []);
 
   //GET GPA
   const fetchGPA = async () => {
-    try {
-        const response = await fetch('http://localhost:3000/api/profile/gpa', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        });
-        if (!response.ok) {
-            throw new Error("Failed to fetch GPA");
+    try{
+      const response= await fetch('http://localhost:3000/api/gpa',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
-        const data = await response.json();
-        setGpa(data.gpa || 'N/A');
-    } catch (err) {
-        console.error("Error getting GPA: ", err);
-        setGpa('N/A');
+      });
+      if (!response.ok){
+        throw new Error("Failed to fetch GPA");
+      }
+      const gpaData = await response.json();
+      setGpa(gpaData);
+
+    } catch(err){
+      console.error("Error getting GPA: ", err);
+      alert("Couldn't get your GPA");
     }
-};
+  };
   
   //GET TASKS
   const fetchTasks = async () => {
@@ -105,11 +112,11 @@ const Main = () => {
    const markComIncom=async(index)=>{
     const taskId=tasks[index]._id;
     try{
-      const response=await fetch(`http://localhost:3000/api/checklist/${taskId}/toggle`,{
+      const response=await fetch(`http://localhost:3000/api/mainPage/checklist/${taskId}/toggle`,{
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token',)
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
       });
       if (!response.ok){
@@ -131,13 +138,17 @@ const Main = () => {
   //Delete a Task
   //Edit a Task
 
+  const toggleEdDel=(index)=>{
+    setEdDel(!editdel)
+    
+  }
 
   return (
     <div className="w-full min-h-screen flex flex-wrap px-[5%] relative">
       <div className="w-1/3 pr-3 flex flex-col gap-3 ">
       {/*GPA*/}
         <div className="rounded-lg bg-[#F1DFB6] h-1/3">
-          <h1 className="text-[#EF601E] font-bold text-2xl mt-3">CUMULATIVE GPA</h1>
+          <h1 className="text-[#EF601E] font-bold text-2xl mt-3">GPA</h1>
           <div className="relative w-full h-64">
             <div className="absolute inset-0 z-10 flex items-center justify-center text-4xl sm:text-5xl md:text-8xl  text-[#EF601E] ">{gpa ? gpa: <div className="opacity-80 italic drop-shadow-md text-gray-500">NO GPA...</div>}</div>
           </div> 
@@ -149,25 +160,31 @@ const Main = () => {
           <div className="p-5 w-full flex flex-wrap">
             <ul className="w-full text-left">
               {tasks.length > 0 ? tasks.map((task, index) => (
-                <li key={index} className="pb-1 w-full text-lg text-[#D6E8F7]">
+                <li key={index} className=" relative pb-1 w-full text-lg text-[#D6E8F7]">
                   <div className="flex items-start justify-between w-full">
                     <div className="flex items-start gap-2 w-full max-w-[calc(100%-2rem)]">
-                      {task.complete ? 
+                      {task.completed ? 
                       (<RiCheckboxCircleFill onClick={() => markComIncom(index)}className="text-2xl flex-shrink-0 cursor-pointer"/>) 
                       :
                       (<RiCheckboxBlankCircleLine onClick={() => markComIncom(index)} className="text-2xl flex-shrink-0 cursor-pointer"/>)
                       }
                       <span className="break-words w-full">{task.taskname}</span>
                     </div>
-                    <TbDotsVertical className="text-xl cursor-pointer ml-2 flex-shrink-0" />
+                    <TbDotsVertical onClick={()=>setEdDel(prev => prev === index ? null : index)} className="text-xl cursor-pointer ml-2 flex-shrink-0" />
                   </div>
+                  {editdel ===index && (
+                    <div className="bg-white text-black rounded p-2 mt-1 w-20 absolute right-0 z-10">
+                    <button>Edit</button>
+                    <button className="ml-2">Delete</button>
+                  </div>
+                  )}
                 </li>
               )) : 
               (<li className="text-xl text-[#D6E8F7] text-center">NO TASKS YET...</li>)
               }
             </ul>
         </div>
-
+        
         {opentask && (
         <div className="bg-[#ac9cb6]  h-/15 w-full rounded-2xl p-1">
           <div>Add your Task</div>
@@ -181,8 +198,8 @@ const Main = () => {
             <button className="bg-amber-100 w-1/3 rounded-2xl" onClick={()=>{openAddTask(false);setNewTask("");}}>Cancel</button>
           </div>
         </div>
-      )}
-          <button onClick={()=>openAddTask(true)} className="bg-[#D6E8F7] rounded-xl w-2/3 mx-10 my-3">ADD A TASK</button>
+        )}
+        <button onClick={()=>openAddTask(true)} className="bg-[#D6E8F7] rounded-xl w-2/3 mx-10 my-3">ADD A TASK</button>
         </div>
       </div>
 
