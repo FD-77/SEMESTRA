@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 
-const Schedule=()=>{
+const seasons = [
+    { id: 'spring', name: 'Spring' },
+    { id: 'summer', name: 'Summer' },
+    { id: 'fall', name: 'Fall' },
+    { id: 'winter', name: 'Winter' }
+];
+
+const years = Array.from({ length: 10 }, (_, i) => {
+    const year = new Date().getFullYear() - 2 + i;
+    return { id: year.toString(), name: year.toString() };
+});
+
+const Schedule = ({ onSemesterChange }) => {
     const dayofWeek=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const times = [
     { slot: "08:00-08:30", actual: "8:00 AM - 8:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
@@ -45,6 +57,8 @@ const Schedule=()=>{
 
     const [schedule, editSchedule] = useState(times);
     const [classes, editClasses] =useState([]);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+    const [selectedSeason, setSelectedSeason] = useState('');
 
 
     useEffect(()=>{
@@ -53,32 +67,45 @@ const Schedule=()=>{
 
     //get Classes
     const fetchClasses = async () => {
-    try{
-        const response= await fetch('http://localhost:3000/api/classes',{
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
-        }
+    try {
+        const response = await fetch('http://localhost:3000/api/classes', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
         });
-        if (!response.ok){
+        if (!response.ok) {
             throw new Error("Failed to fetch classes");
         }
         const gotClasses = await response.json();
-        if (JSON.stringify(gotClasses) !== JSON.stringify(classes)) {
-            editClasses(gotClasses);  // Only update if classes have changed
-        }   
-
-    } catch(err){
-      console.error("Error getting Classes: ", err);
-      alert("Could not get your classes");
+        
+        // Filter classes by selected semester
+        if (selectedYear && selectedSeason) {
+            const termToMatch = `${selectedYear} ${selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)} Term`;
+            const filteredClasses = gotClasses.filter(cls => cls.term === termToMatch);
+            editClasses(filteredClasses);
+        } else {
+            editClasses([]); // No classes if no semester selected
+        }
+    } catch (err) {
+        console.error("Error getting Classes: ", err);
+        alert("Could not get your classes");
     }
-  };
+};
+
+// Update useEffect to run when semester selection changes
+useEffect(() => {
+    fetchClasses();
+}, [selectedYear, selectedSeason]);
 
 
     useEffect(() => {
+        // Reset schedule to initial state when semester changes
+        editSchedule(times);
+        
         console.log(schedule);
-        const updatedSchedule = [...schedule];
+        const updatedSchedule = [...times]; // Use times instead of schedule to start fresh
     
         const getSlotIndex = (timeStr) => {
             let [hourStr, minuteAmPm] = timeStr.split(':');
@@ -122,7 +149,7 @@ const Schedule=()=>{
                 const endMin = parseInt(endMinStr, 10);
 
                 if (endMin === 0) {
-                    endIndex -= (endHour > (schedule[0]?.slot?.split('-')[0]?.split(':')[0] || 8) ? 0 : 0);
+                    endIndex -= (endHour > (times[0]?.slot?.split('-')[0]?.split(':')[0] || 8) ? 0 : 0);
                 } else if (endMin === 45) {
                     endIndex += 1;
                 } else if (endMin === 15) {
@@ -130,72 +157,123 @@ const Schedule=()=>{
                 }
 
                 days.forEach(day => {
-                const dayLower = day.toLowerCase().substring(0, 3);
-                for (let i = startIndex; i < endIndex; i++) {
-                    if (updatedSchedule[i] && updatedSchedule[i].hasOwnProperty(dayLower)) {
-                        if (i === startIndex) {
-                            updatedSchedule[i][dayLower] = [true, className]; // Mark start + store name
-                        } 
-                        else {
-                            updatedSchedule[i][dayLower] = [className]; // Normal timeslot
-                        }
-                    }    
-                }
+                    const dayLower = day.toLowerCase().substring(0, 3);
+                    for (let i = startIndex; i < endIndex; i++) {
+                        if (updatedSchedule[i] && updatedSchedule[i].hasOwnProperty(dayLower)) {
+                            if (i === startIndex) {
+                                updatedSchedule[i][dayLower] = [true, className]; // Mark start + store name
+                            } 
+                            else {
+                                updatedSchedule[i][dayLower] = [className]; // Normal timeslot
+                            }
+                        }    
+                    }
                 });
             })       
     
             
         });
         editSchedule(updatedSchedule);
-    }, [classes]);
+    }, [classes, selectedYear, selectedSeason]); // Add selectedYear and selectedSeason as dependencies
       
     const firstClassIndex = schedule.findIndex(timeSlot =>
         ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].some(day => timeSlot[day].length > 0)
     );
   const visibleSchedule = schedule.slice(firstClassIndex);
-    return(
-        <>
-        <div className='overflow-x-auto rounded-lg shadow-md '>
-    <table className="min-w-full leading-normal">
-        <thead>
-            <tr className="bg-gray-100 text-gray-700">
-                <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">Time</th>
-                {dayofWeek.map(day => (
-                    <th key={day} className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">{day}</th>
-                ))}
-            </tr>
-        </thead>
-        <tbody>
-            {classes.length >0 ? visibleSchedule.map((timeSlot, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">{timeSlot.actual}</th>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.sun[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.sun[1] ? timeSlot.sun[1] : ''} 
-                    </td>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.mon[0] ? 'bg-yellow-100 text-yellow-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.mon[1] ? timeSlot.mon[1] : ''}
-                    </td>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.tue[0] ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.tue[1] ? timeSlot.tue[1] : ''}
-                    </td>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.wed[0] ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.wed[1] ? timeSlot.wed[1] : ''}
-                    </td>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.thu[0] ? 'bg-teal-100 text-teal-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.thu[1] ? timeSlot.thu[1] : ''}
-                    </td>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.fri[0] ? 'bg-red-100 text-red-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.fri[1] ? timeSlot.fri[1] : ''}
-                    </td>
-                    <td className={`px-4 py-2 text-center text-sm ${timeSlot.sat[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
-                        {timeSlot.sat[1] ? timeSlot.sat[1] : ''}
-                    </td>
-                </tr>
-            )): 
-            <tr><td colSpan="8" className="text-center py-4 text-xl text-gray-500 italic">No Classes...</td></tr>}
-        </tbody>
-    </table>
+  return (
+      <>
+      {/* Add semester selector */}
+      <div className="flex gap-4 mb-4">
+    <select 
+        value={selectedYear}
+        onChange={(e) => {
+            setSelectedYear(e.target.value);
+            if (selectedSeason && e.target.value) {
+                const seasonName = seasons.find(s => s.id === selectedSeason)?.name;
+                onSemesterChange(e.target.value, seasonName);
+            }
+        }}
+        className="flex-1 p-2 border rounded-md text-gray-700"
+    >
+        <option value="">Select Year</option>
+        {years.map(year => (
+            <option key={year.id} value={year.id}>
+                {year.name}
+            </option>
+        ))}
+    </select>
+    <select
+        value={selectedSeason}
+        onChange={(e) => {
+            setSelectedSeason(e.target.value);
+            if (selectedYear && e.target.value) {
+                // Find the season object and use its name instead of id
+                const seasonName = seasons.find(s => s.id === e.target.value)?.name;
+                onSemesterChange(selectedYear, seasonName);
+            }
+        }}
+        className="flex-1 p-2 border rounded-md text-gray-700"
+    >
+        <option value="">Select Season</option>
+        {seasons.map(season => (
+            <option key={season.id} value={season.id}>
+                {season.name}
+            </option>
+        ))}
+    </select>
 </div>
-        </>
-    )
+
+      {/* Existing table code */}
+      <div className='overflow-x-auto rounded-lg shadow-md'>
+  <table className="min-w-full leading-normal">
+      <thead>
+          <tr className="bg-gray-100 text-gray-700">
+              <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">Time</th>
+              {dayofWeek.map(day => (
+                  <th key={day} className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">{day}</th>
+              ))}
+          </tr>
+      </thead>
+      <tbody>
+          {(!selectedYear || !selectedSeason) ? (
+  <tr><td colSpan="8" className="text-center py-4 text-xl text-gray-500 italic">
+      Please select a semester...
+  </td></tr>
+) : classes.length === 0 ? (
+  <tr><td colSpan="8" className="text-center py-4 text-xl text-gray-500 italic">
+      No classes in this semester...
+  </td></tr>
+) : (
+  visibleSchedule.map((timeSlot, index) => (
+      <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">{timeSlot.actual}</th>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.sun[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.sun[1] ? timeSlot.sun[1] : ''} 
+                  </td>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.mon[0] ? 'bg-yellow-100 text-yellow-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.mon[1] ? timeSlot.mon[1] : ''}
+                  </td>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.tue[0] ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.tue[1] ? timeSlot.tue[1] : ''}
+                  </td>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.wed[0] ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.wed[1] ? timeSlot.wed[1] : ''}
+                  </td>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.thu[0] ? 'bg-teal-100 text-teal-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.thu[1] ? timeSlot.thu[1] : ''}
+                  </td>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.fri[0] ? 'bg-red-100 text-red-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.fri[1] ? timeSlot.fri[1] : ''}
+                  </td>
+                  <td className={`px-4 py-2 text-center text-sm ${timeSlot.sat[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
+                      {timeSlot.sat[1] ? timeSlot.sat[1] : ''}
+                  </td>
+              </tr>
+  ))
+)}
+      </tbody>
+  </table>
+</div>
+      </>
+  )
 };export default Schedule;

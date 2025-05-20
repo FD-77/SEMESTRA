@@ -411,19 +411,36 @@ const GPACalculator = () => {
             if (activeTab === "semester" && selectedYear && selectedSeason) {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch('http://localhost:3000/api/classes', {
+                    // First fetch the existing semester GPA
+                    const semesterResponse = await fetch('http://localhost:3000/api/semesters', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    if (response.ok) {
-                        const data = await response.json();
+
+                    if (semesterResponse.ok) {
+                        const semesters = await semesterResponse.json();
+                        const currentSemester = semesters.find(sem => 
+                            sem.year === selectedYear && 
+                            sem.season.toLowerCase() === selectedSeason.toLowerCase()
+                        );
+                        
+                        // Set existing semester GPA or N/A if none exists
+                        setSemesterGPA(currentSemester?.semesterGPA || 'N/A');
+                    }
+
+                    // Then fetch the classes
+                    const classResponse = await fetch('http://localhost:3000/api/classes', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (classResponse.ok) {
+                        const data = await classResponse.json();
                         const termToMatch = `${selectedYear} ${selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)} Term`;
                         
-                        // Get all classes for the selected term
                         const filteredClasses = data.filter(cls => cls.term === termToMatch);
-                        
-                        // Map to consistent format, using N/A for missing values
                         const classesWithGrades = filteredClasses.map(cls => ({
                             id: cls._id,
                             name: `${cls.classNo} - ${cls.className}`,
@@ -431,14 +448,16 @@ const GPACalculator = () => {
                             grade: cls.grade || 'N/A'
                         }));
 
-                        // If no classes found, set empty array to show N/A values
-                        setSemesterClasses(classesWithGrades.length > 0 ? classesWithGrades : []);
+                        setSemesterClasses(classesWithGrades);
                     }
                 } catch (error) {
-                    console.error('Error fetching classes with grades:', error);
-                    // Set empty array on error to show N/A values
+                    console.error('Error fetching semester data:', error);
                     setSemesterClasses([]);
+                    setSemesterGPA('N/A');
                 }
+            } else {
+                setSemesterClasses([]);
+                setSemesterGPA('N/A');
             }
         };
 
@@ -447,12 +466,16 @@ const GPACalculator = () => {
 
     // Add this function to calculate semester GPA
     const calculateSemesterGPA = useCallback(() => {
+        if (!selectedYear || !selectedSeason) {
+            setSemesterGPA('N/A');
+            return;
+        }
+
         let totalQualityPoints = 0;
         let totalCredits = 0;
 
         semesterClasses.forEach(cls => {
-            // Skip if no grade or credits
-            if (!cls.grade || !cls.credits) return;
+            if (cls.grade === 'N/A' || cls.credits === 'N/A') return;
 
             const credits = parseFloat(cls.credits);
             // Convert letter grade to grade points
@@ -479,12 +502,12 @@ const GPACalculator = () => {
         });
 
         // Calculate GPA (total quality points ÷ total credits)
-        const semesterGPA = totalCredits > 0 ? 
+        const gpa = totalCredits > 0 ? 
             (totalQualityPoints / totalCredits).toFixed(2) : 
-            0;
+            'N/A';
 
-        setSemesterGPA(semesterGPA);
-    }, [semesterClasses]);
+        setSemesterGPA(gpa);
+    }, [semesterClasses, selectedYear, selectedSeason]);
 
     // Add useEffect to trigger calculation when semester classes change
     useEffect(() => {
