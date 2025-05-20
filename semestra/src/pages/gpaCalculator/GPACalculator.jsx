@@ -18,6 +18,18 @@ const gradeOptions = [
     { id: '0.0', name: 'F' }
 ];
 
+const seasons = [
+    { id: 'spring', name: 'Spring' },
+    { id: 'summer', name: 'Summer' },
+    { id: 'fall', name: 'Fall' },
+    { id: 'winter', name: 'Winter' }
+];
+
+const years = Array.from({ length: 10 }, (_, i) => {
+    const year = new Date().getFullYear() - 2 + i;
+    return { id: year.toString(), name: year.toString() };
+});
+
 const GPACalculator = () => {
     const [activeTab, setActiveTab] = useState("class");
     const [classes, setClasses] = useState([]);
@@ -33,6 +45,9 @@ const GPACalculator = () => {
 
     const [classGPA, setClassGPA] = useState(0);
     const [semesterGPA, setSemesterGPA] = useState(0);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+    const [selectedSeason, setSelectedSeason] = useState('');
+    const [cumulativeGPA, setCumulativeGPA] = useState('N/A');
 
     // Fetch classes from the database
     useEffect(() => {
@@ -393,7 +408,7 @@ const GPACalculator = () => {
     // Add this useEffect to fetch all classes with their grades
     useEffect(() => {
         const fetchClassesWithGrades = async () => {
-            if (activeTab === "semester") {
+            if (activeTab === "semester" && selectedYear && selectedSeason) {
                 try {
                     const token = localStorage.getItem('token');
                     const response = await fetch('http://localhost:3000/api/classes', {
@@ -403,22 +418,32 @@ const GPACalculator = () => {
                     });
                     if (response.ok) {
                         const data = await response.json();
-                        const classesWithGrades = data.map(cls => ({
+                        const termToMatch = `${selectedYear} ${selectedSeason.charAt(0).toUpperCase() + selectedSeason.slice(1)} Term`;
+                        
+                        // Get all classes for the selected term
+                        const filteredClasses = data.filter(cls => cls.term === termToMatch);
+                        
+                        // Map to consistent format, using N/A for missing values
+                        const classesWithGrades = filteredClasses.map(cls => ({
                             id: cls._id,
                             name: `${cls.classNo} - ${cls.className}`,
-                            credits: cls.credits,
+                            credits: cls.credits || 'N/A',
                             grade: cls.grade || 'N/A'
                         }));
-                        setSemesterClasses(classesWithGrades);
+
+                        // If no classes found, set empty array to show N/A values
+                        setSemesterClasses(classesWithGrades.length > 0 ? classesWithGrades : []);
                     }
                 } catch (error) {
                     console.error('Error fetching classes with grades:', error);
+                    // Set empty array on error to show N/A values
+                    setSemesterClasses([]);
                 }
             }
         };
 
         fetchClassesWithGrades();
-    }, [activeTab]);
+    }, [activeTab, selectedYear, selectedSeason]); // Add selectedYear and selectedSeason to dependencies
 
     // Add this function to calculate semester GPA
     const calculateSemesterGPA = useCallback(() => {
@@ -468,6 +493,118 @@ const GPACalculator = () => {
         }
     }, [semesterClasses, activeTab, calculateSemesterGPA]);
 
+    // Add this function after calculateSemesterGPA
+    const saveSemesterGPA = useCallback(async () => {
+        if (!selectedYear || !selectedSeason || !semesterGPA) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/semesters', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    year: selectedYear,
+                    season: selectedSeason,
+                    semesterGPA: parseFloat(semesterGPA) // Changed from gpa to semesterGPA to match backend
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save semester GPA');
+            }
+
+            const result = await response.json();
+            console.log('Semester GPA saved:', result);
+        } catch (error) {
+            console.error('Error saving semester GPA:', error);
+        }
+    }, [selectedYear, selectedSeason, semesterGPA]);
+
+    // Add useEffect to save semester GPA when it changes
+    useEffect(() => {
+        if (activeTab === "semester" && semesterGPA > 0) {
+            saveSemesterGPA();
+        }
+    }, [semesterGPA, activeTab, saveSemesterGPA]);
+
+    // Add this function after calculateSemesterGPA
+    const calculateCumulativeGPA = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/classes', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const allClasses = await response.json();
+                let totalQualityPoints = 0;
+                let totalCredits = 0;
+
+                // Calculate for all classes regardless of term
+                allClasses.forEach(cls => {
+                    if (cls.grade && cls.credits) {
+                        const credits = parseFloat(cls.credits);
+                        const gradePoints = 
+                            cls.grade === 'A' ? 4.0 :
+                            cls.grade === 'A-' ? 3.7 :
+                            cls.grade === 'B+' ? 3.3 :
+                            cls.grade === 'B' ? 3.0 :
+                            cls.grade === 'B-' ? 2.7 :
+                            cls.grade === 'C+' ? 2.3 :
+                            cls.grade === 'C' ? 2.0 :
+                            cls.grade === 'C-' ? 1.7 :
+                            cls.grade === 'D+' ? 1.3 :
+                            cls.grade === 'D' ? 1.0 :
+                            cls.grade === 'F' ? 0.0 : null;
+
+                        if (gradePoints !== null) {
+                            totalQualityPoints += (credits * gradePoints);
+                            totalCredits += credits;
+                        }
+                    }
+                });
+
+                const cumulative = totalCredits > 0 ? 
+                    (totalQualityPoints / totalCredits).toFixed(2) : 
+                    'N/A';
+
+                setCumulativeGPA(cumulative);
+
+                // Save cumulative GPA to user profile
+                if (cumulative !== 'N/A') {
+                    const updateResponse = await fetch('http://localhost:3000/api/profile/gpa', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            gpa: parseFloat(cumulative)
+                        })
+                    });
+
+                    if (!updateResponse.ok) {
+                        throw new Error('Failed to update user GPA');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error calculating/saving cumulative GPA:', error);
+        }
+    }, []);
+
+    // Add useEffect to calculate cumulative GPA when tab changes
+    useEffect(() => {
+        if (activeTab === "semester") {
+            calculateCumulativeGPA();
+        }
+    }, [activeTab, calculateCumulativeGPA]);
+
     return (
         <div className="gpa-calculator">
             <h1 className="gpa-calculator__title">GPA Calculator</h1>
@@ -488,6 +625,7 @@ const GPACalculator = () => {
             </div>
             
             <div className="gpa-calculator__content">
+                {/* Class GPA tab content */}
                 {activeTab === "class" && (
                     <div className="flex items-center gap-4 mb-6">
                         <div className="gpa-calculator__class-selector flex-1">
@@ -688,8 +826,28 @@ const GPACalculator = () => {
                     </>
                 ) : null}
 
-                {activeTab === "semester" ? (
+                {/* Semester GPA tab content */}
+                {activeTab === "semester" && (
                     <>
+                        <div className="flex gap-4 mb-6">
+                            <div className="flex-1">
+                                <CustomSelect
+                                    options={years}
+                                    value={selectedYear}
+                                    onChange={setSelectedYear}
+                                    placeholder="Select Year"
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <CustomSelect
+                                    options={seasons}
+                                    value={selectedSeason}
+                                    onChange={setSelectedSeason}
+                                    placeholder="Select Season"
+                                />
+                            </div>
+                        </div>
+
                         <div className="flex gap-4 mb-2">
                             <div className="flex-1">
                                 <div className="text-xl font-semibold text-black text-center">Class Name</div>
@@ -702,38 +860,37 @@ const GPACalculator = () => {
                             </div>
                         </div>
 
-                        {semesterClasses.map((cls) => (
+                        {/* Always show at least one row with N/A values if no data */}
+                        {(semesterClasses.length > 0 ? semesterClasses : [{ id: 'empty', name: 'N/A', credits: 'N/A', grade: 'N/A' }]).map((cls) => (
                             <div key={cls.id} className="gpa-calculator__row flex gap-4 mb-4">
                                 <div className="flex-1">
-                                    <div className="gpa-calculator__semester-field">
-                                        {cls.name}
-                                    </div>
+                                    <div className="gpa-calculator__semester-field">{cls.name || 'N/A'}</div>
                                 </div>
                                 <div className="w-32">
-                                    <div className="gpa-calculator__semester-credits">
-                                        {cls.credits}
-                                    </div>
+                                    <div className="gpa-calculator__semester-credits">{cls.credits || 'N/A'}</div>
                                 </div>
                                 <div className="w-32">
-                                    <div className="gpa-calculator__semester-grade">
-                                        {cls.grade || 'N/A'}
-                                    </div>
+                                    <div className="gpa-calculator__semester-grade">{cls.grade || 'N/A'}</div>
                                 </div>
                             </div>
                         ))}
 
-                        {semesterClasses.length > 0 && (
-                            <div className="mt-8">
-                                <div className="text-2xl font-bold text-center flex items-center justify-center gap-4">
-                                    <span>Semester GPA:</span>
-                                    <span className="bg-purple-200 rounded-full px-6 py-2">
-                                        {semesterGPA}
-                                    </span>
-                                </div>
+                        <div className="mt-8 space-y-4">
+                            <div className="text-2xl font-bold text-center flex items-center justify-center gap-4">
+                                <span>Semester GPA:</span>
+                                <span className="bg-purple-200 rounded-full px-6 py-2">
+                                    {semesterGPA || 'N/A'}
+                                </span>
                             </div>
-                        )}
+                            <div className="text-2xl font-bold text-center flex items-center justify-center gap-4">
+                                <span>Cumulative GPA:</span>
+                                <span className="bg-purple-200 rounded-full px-6 py-2">
+                                    {cumulativeGPA}
+                                </span>
+                            </div>
+                        </div>
                     </>
-                ) : null}
+                )}
             </div>
         </div>
     );

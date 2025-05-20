@@ -26,25 +26,24 @@ const Main = () => {
 
   //GET GPA
   const fetchGPA = async () => {
-    try{
-      const response= await fetch('http://localhost:3000/api/gpa',{
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
+    try {
+        const response = await fetch('http://localhost:3000/api/profile/gpa', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Failed to fetch GPA");
         }
-      });
-      if (!response.ok){
-        throw new Error("Failed to fetch GPA");
-      }
-      const gpaData = await response.json();
-      setGpa(gpaData);
-
-    } catch(err){
-      console.error("Error getting GPA: ", err);
-      alert("Couldn't get your GPA");
+        const data = await response.json();
+        setGpa(data.gpa || 'N/A');
+    } catch (err) {
+        console.error("Error getting GPA: ", err);
+        setGpa('N/A');
     }
-  };
+};
   
   //GET TASKS
   const fetchTasks = async () => {
@@ -138,7 +137,7 @@ const Main = () => {
       <div className="w-1/3 pr-3 flex flex-col gap-3 ">
       {/*GPA*/}
         <div className="rounded-lg bg-[#F1DFB6] h-1/3">
-          <h1 className="text-[#EF601E] font-bold text-2xl mt-3">GPA</h1>
+          <h1 className="text-[#EF601E] font-bold text-2xl mt-3">CUMULATIVE GPA</h1>
           <div className="relative w-full h-64">
             <div className="absolute inset-0 z-10 flex items-center justify-center text-4xl sm:text-5xl md:text-8xl  text-[#EF601E] ">{gpa ? gpa: <div className="opacity-80 italic drop-shadow-md text-gray-500">NO GPA...</div>}</div>
           </div> 

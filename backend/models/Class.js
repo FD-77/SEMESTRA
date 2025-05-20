@@ -61,7 +61,11 @@ const classSchema = new mongoose.Schema({
         name: String,
         category: String,
         grade: Number
-    }]
+    }],
+    semesterGPA: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true
 });

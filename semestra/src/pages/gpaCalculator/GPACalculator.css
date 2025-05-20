@@ -496,3 +496,16 @@
     color: #ffffff; /* gray-800 for better readability */
 }
 
+.gpa-calculator__semester-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f5e6d3;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.gpa-calculator__semester-selector .custom-select {
+    flex: 1;
+}
+

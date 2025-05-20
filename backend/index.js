@@ -9,6 +9,7 @@ const mainRoutes = require("./routes/mainPage")
 const profileRoutes = require("./routes/profile");
 const classDetailRoutes = require("./routes/classDetail");
 const taskRoutes = require("./routes/tasks");
+const semestersRoutes = require('./routes/semesters');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.use("/api/mainPage", mainRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/class-detail", classDetailRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use('/api/semesters', semestersRoutes);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

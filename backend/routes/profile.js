@@ -61,4 +61,37 @@ router.get('/classes', auth, async (req, res) => {
     }
 });
 
-module.exports = router; 
+// Update user's GPA
+router.put('/gpa', auth, async (req, res) => {
+    try {
+        const { gpa } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { gpa: parseFloat(gpa) },
+            { new: true }
+        );
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        res.json({ gpa: user.gpa });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Get user's GPA
+router.get('/gpa', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('gpa');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ gpa: user.gpa || 'N/A' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+module.exports = router;

@@ -23,12 +23,20 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
             const year = termParts[0];
             const season = termParts[1]?.toLowerCase();
 
-            setFormData({
+            const formattedData = {
                 ...editData,
                 year: year || new Date().getFullYear().toString(),
-                season: season || "",
+                season: season?.toLowerCase() || "",
                 schedule: editData.schedule || [],
-            });
+            };
+
+            // Ensure term is properly formatted
+            if (formattedData.year && formattedData.season) {
+                const capitalizedSeason = formattedData.season.charAt(0).toUpperCase() + formattedData.season.slice(1);
+                formattedData.term = `${formattedData.year} ${capitalizedSeason} Term`;
+            }
+
+            setFormData(formattedData);
         }
     }, [editData]);
 
@@ -70,9 +78,10 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
             
             // Update term when year or season changes
             if (name === 'year' || name === 'season') {
-                newState.term = newState.year && newState.season 
-                    ? `${newState.year} ${newState.season.charAt(0).toUpperCase() + newState.season.slice(1)} Term`
-                    : '';
+                if (newState.year && newState.season) {
+                    const capitalizedSeason = newState.season.charAt(0).toUpperCase() + newState.season.slice(1);
+                    newState.term = `${newState.year} ${capitalizedSeason} Term`;
+                }
             }
             
             return newState;
@@ -81,7 +90,12 @@ const ClassModal = ({ isOpen, onClose, onSubmit, editData }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);
+        // Ensure term is properly formatted before submitting
+        const formDataWithTerm = {
+            ...formData,
+            term: `${formData.year} ${formData.season.charAt(0).toUpperCase() + formData.season.slice(1)} Term`
+        };
+        onSubmit(formDataWithTerm);
         onClose();
     };
 

@@ -121,4 +121,14 @@ router.get('/:id/gpa-data', auth, async (req, res) => {
     }
 });
 
+// Get all semesters for user
+router.get('/semesters', auth, async (req, res) => {
+    try {
+        const semesters = await Semester.find({ userId: req.user.id });
+        res.json(semesters);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 module.exports = router;
