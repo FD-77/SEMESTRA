@@ -5,6 +5,9 @@ require('dotenv').config();
 
 const authRoutes = require("./routes/auth");
 const classRoutes = require("./routes/classes");
+const profileRoutes = require("./routes/profile");
+const classDetailRoutes = require("./routes/classDetail");
+const taskRoutes = require("./routes/tasks");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,6 +32,9 @@ connectDB();
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/classes", classRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/class-detail", classDetailRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

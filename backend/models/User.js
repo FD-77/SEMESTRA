@@ -18,10 +18,27 @@ const userSchema = new mongoose.Schema({
     password_hash: {
         type: String,
         required: true
+    },
+    school: {
+        type: String,
+        trim: true
+    },
+    gpa: {
+        type: Number,
+        min: 0,
+        max: 4.0
+    },
+    major: {
+        type: String,
+        trim: true
+    },
+    phone: {
+        type: String,
+        trim: true
     }
 }, {
     timestamps: true,
-    collection: 'users'  // Explicitly specify the collection name
+    collection: 'users'
 });
 
 const User = mongoose.model('User', userSchema);

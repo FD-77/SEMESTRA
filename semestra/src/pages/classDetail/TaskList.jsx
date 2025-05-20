@@ -1,58 +1,108 @@
 import React, { useState } from 'react';
 import Task from './Task';
 
-const TaskList = ({ tasks, onToggle, onUpdate, onDelete }) => {
+const TaskList = ({ tasks, onToggle, onUpdate, onDelete, classId }) => {
     const [showOptions, setShowOptions] = useState(null);
     const [isAddingTask, setIsAddingTask] = useState(false);
     const [newTaskTitle, setNewTaskTitle] = useState("");
     const [editingTask, setEditingTask] = useState(null);
+    const [error, setError] = useState("");
 
-    const handleAddTask = () => {
+    const handleAddTask = async () => {
         if (newTaskTitle.trim()) {
-            const newTask = {
-                _id: new Date().getTime(),
-                title: newTaskTitle,
-                completed: false
-            };
-            onUpdate([...tasks, newTask]);
-            setNewTaskTitle("");
-            setIsAddingTask(false);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:3000/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title: newTaskTitle,
+                        classId: classId
+                    })
+                });
+
+                if (response.ok) {
+                    const newTask = await response.json();
+                    onUpdate(newTask);
+                    setNewTaskTitle("");
+                    setIsAddingTask(false);
+                    setError("");
+                } else {
+                    const data = await response.json();
+                    setError(data.message || "Failed to add task");
+                }
+            } catch (err) {
+                setError("Error adding task");
+                console.error('Error adding task:', err);
+            }
         }
     };
 
     const handleEditTask = (taskId) => {
-        const task = tasks.find(t => t.id === taskId);
+        const task = tasks.find(t => t._id === taskId);
         if (task) {
             setEditingTask({ id: taskId, title: task.title });
             setShowOptions(null);
         }
     };
 
-    const handleUpdateTask = () => {
+    const handleUpdateTask = async () => {
         if (editingTask && editingTask.title.trim()) {
-            onUpdate(tasks.map(task =>
-                task.id === editingTask.id ? { ...task, title: editingTask.title } : task
-            ));
-            setEditingTask(null);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3000/api/tasks/${editingTask.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title: editingTask.title,
+                        completed: tasks.find(t => t._id === editingTask.id)?.completed || false
+                    })
+                });
+
+                if (response.ok) {
+                    const updatedTask = await response.json();
+                    onUpdate(tasks.map(task =>
+                        task._id === updatedTask._id ? updatedTask : task
+                    ));
+                    setEditingTask(null);
+                    setError("");
+                } else {
+                    const data = await response.json();
+                    setError(data.message || "Failed to update task");
+                }
+            } catch (err) {
+                setError("Error updating task");
+                console.error('Error updating task:', err);
+            }
         }
     };
 
     return (
         <div>
+            {error && (
+                <div className="text-red-500 mb-4">{error}</div>
+            )}
+            
             <div className="space-y-3 md:space-y-4">
                 {tasks.map((task) => (
                     <Task
-                        key={task.id}
+                        key={task._id}
                         task={task}
                         onToggle={onToggle}
                         onEdit={handleEditTask}
                         onDelete={onDelete}
-                        isEditing={editingTask?.id === task.id}
+                        isEditing={editingTask?.id === task._id}
                         editingTitle={editingTask?.title}
                         onEditChange={(title) => setEditingTask({ ...editingTask, title })}
                         onSave={handleUpdateTask}
                         onCancel={() => setEditingTask(null)}
-                        showOptions={showOptions === task.id}
+                        showOptions={showOptions === task._id}
                         onOptionsClick={(id) => setShowOptions(showOptions === id ? null : id)}
                     />
                 ))}
@@ -79,6 +129,7 @@ const TaskList = ({ tasks, onToggle, onUpdate, onDelete }) => {
                             onClick={() => {
                                 setIsAddingTask(false);
                                 setNewTaskTitle("");
+                                setError("");
                             }}
                             className="flex-1 bg-gray-500 text-white rounded-2xl py-2 md:py-3 text-base md:text-xl"
                         >

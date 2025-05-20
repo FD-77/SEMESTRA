@@ -19,13 +19,13 @@ const Task = ({
     const TaskOptions = () => (
         <div className="absolute right-4 top-14 bg-white shadow-lg rounded-lg py-2 z-10">
             <button
-                onClick={() => onEdit(task.id)}
+                onClick={() => onEdit(task._id)}
                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 w-full text-sm md:text-base"
             >
                 <FiEdit className="size-4 md:size-5" /> Edit
             </button>
             <button
-                onClick={() => onDelete(task.id)}
+                onClick={() => onDelete(task._id)}
                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 w-full text-red-600 text-sm md:text-base"
             >
                 <RiDeleteBin6Line className="size-4 md:size-5" /> Delete
@@ -41,7 +41,7 @@ const Task = ({
                 <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => onToggle(task.id)}
+                    onChange={() => onToggle(task._id)}
                     className="size-5 md:size-6"
                 />
                 {isEditing ? (
@@ -73,7 +73,7 @@ const Task = ({
             <div className="relative">
                 <BsThreeDotsVertical
                     className="size-5 md:size-6 cursor-pointer"
-                    onClick={() => onOptionsClick(task.id)}
+                    onClick={() => onOptionsClick(task._id)}
                 />
                 {showOptions && <TaskOptions />}
             </div>
