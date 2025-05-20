@@ -55,6 +55,9 @@ const classSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// Create a compound index for classNo and userId
+classSchema.index({ classNo: 1, userId: 1 });
+
 const Class = mongoose.model('Class', classSchema);
 
 module.exports = Class;

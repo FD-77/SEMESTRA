@@ -49,44 +49,71 @@ const Classes = () => {
     const handleEditClass = async (classData) => {
         try {
             const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            // Ensure userId is included in edit
+            const classWithUserId = {
+                ...classData,
+                userId: user.id
+            };
+
             const response = await fetch(`http://localhost:3000/api/classes/${classData._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(classData)
+                body: JSON.stringify(classWithUserId)
             });
-            const updatedClass = await response.json();
-            if (response.ok) {
-                setClasses(classes.map(cls => 
-                    cls._id === updatedClass._id ? updatedClass : cls
-                ));
-                setIsModalOpen(false);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update class');
             }
+
+            const updatedClass = await response.json();
+            setClasses(classes.map(cls => 
+                cls._id === updatedClass._id ? updatedClass : cls
+            ));
+            setIsModalOpen(false);
         } catch (error) {
             console.error('Error updating class:', error);
+            alert(error.message || 'Error updating class');
         }
     };
 
     const handleAddClass = async (classData) => {
         try {
             const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            // Add userId to the class data
+            const classWithUserId = {
+                ...classData,
+                userId: user.id
+            };
+
             const response = await fetch('http://localhost:3000/api/classes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(classData)
+                body: JSON.stringify(classWithUserId)
             });
-            const newClass = await response.json();
-            if (response.ok) {
-                setClasses([...classes, newClass]);
-                setIsModalOpen(false);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error response:', errorData);
+                throw new Error(errorData.message || 'Failed to add class');
             }
+
+            const newClass = await response.json();
+            setClasses([...classes, newClass]);
+            setIsModalOpen(false);
         } catch (error) {
             console.error('Error adding class:', error);
+            alert(error.message || 'Error adding class');
         }
     };
 
