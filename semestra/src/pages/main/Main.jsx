@@ -174,10 +174,7 @@ const Main = () => {
         setSemesterGPA('N/A');
     }
 };
-  const toggleEdDel=(index)=>{
-    setEdDel(!editdel)
-    
-  }
+  
 
   return (
     <div className="w-full min-h-screen flex flex-wrap px-[5%] relative">
@@ -225,9 +222,9 @@ const Main = () => {
                     <TbDotsVertical onClick={()=>setEdDel(prev => prev === index ? null : index)} className="text-xl cursor-pointer ml-2 flex-shrink-0" />
                   </div>
                   {editdel ===index && (
-                    <div className="bg-white text-black rounded p-2 mt-1 w-20 absolute right-0 z-10">
-                    <button>Edit</button>
-                    <button className="ml-2">Delete</button>
+                    <div className="bg-white text-black rounded p-2 mt-1 w-25 absolute right-0 z-10">
+                    <button className="mx-2 items-center gap-2 flex cursor-pointer" > <FiEdit className="text-xl flex-shrink-0 "/>Edit</button>
+                    <button className="mx-2 items-center gap-2 flex cursor-pointer"><RiDeleteBin6Line className="text-red-500 text-xl flex-shrink-0"/> Delete</button>
                   </div>
                   )}
                 </li>
