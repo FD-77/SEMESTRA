@@ -49,7 +49,7 @@ const Main = () => {
   //GET TASKS
   const fetchTasks = async () => {
     try{
-      const response= await fetch('http://localhost:3000/api/getChecklist',{
+      const response= await fetch('http://localhost:3000/api/mainPage/getChecklist',{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const Main = () => {
       return;
     }
     try{
-      const response=await fetch('http://localhost:3000/api/addToChecklist',{
+      const response=await fetch('http://localhost:3000/api/mainPage/addToChecklist',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ const Main = () => {
                       :
                       (<RiCheckboxBlankCircleLine onClick={() => markComIncom(index)} className="text-2xl flex-shrink-0 cursor-pointer"/>)
                       }
-                      <span className="break-words w-full">{task.name}</span>
+                      <span className="break-words w-full">{task.taskname}</span>
                     </div>
                     <TbDotsVertical className="text-xl cursor-pointer ml-2 flex-shrink-0" />
                   </div>
