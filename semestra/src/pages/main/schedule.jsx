@@ -40,11 +40,41 @@ const Schedule=()=>{
         {classname: "Computer Organization", startTime: "3:30 pm", endTime: "4:45 pm", days: ["Monday", "Wednesday"]},
         {classname: "Computer Design", startTime: "6:30 pm", endTime: "7:45pm", days: ["Tuesday", "Thursday"]},
         {classname: "Senior Project", startTime: "7:30 pm", endTime: "7:45pm", days: ["Friday"]},
-        {classname: "Software Engineering", startTime: "4:04 pm", endTime: "5:30 pm", days: ["Sunday", "Tuesday"]}
+        {classname: "Software Engineering", startTime: "4:15 pm", endTime: "5:30 pm", days: ["Sunday", "Tuesday"]}
   ];
 
     const [schedule, editSchedule] = useState(times);
-    const [classes, editClasses] =useState(classObj);
+    const [classes, editClasses] =useState([]);
+
+
+    useEffect(()=>{
+        fetchClasses();
+    }, []);
+
+    //get Classes
+    const fetchClasses = async () => {
+    try{
+        const response= await fetch('http://localhost:3000/api/classes',{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+        });
+        if (!response.ok){
+            throw new Error("Failed to fetch classes");
+        }
+        const gotClasses = await response.json();
+        if (JSON.stringify(gotClasses) !== JSON.stringify(classes)) {
+            editClasses(gotClasses);  // Only update if classes have changed
+        }   
+
+    } catch(err){
+      console.error("Error getting Classes: ", err);
+      alert("Could not get your classes");
+    }
+  };
+
 
     useEffect(() => {
         console.log(schedule);
@@ -80,37 +110,41 @@ const Schedule=()=>{
         };
     
         classes.forEach(cls => {
-            const { startTime, endTime, days, classname } = cls; 
+            const {className}=cls;
+            
+            cls.schedule.forEach(scheduleEntry =>{
+                const { startTime, endTime, days } = scheduleEntry; 
+                let startIndex = getSlotIndex(startTime);
+                let endIndex = getSlotIndex(endTime);
+                const [endHourStr] = endTime.split(':');
+                const endHour = parseInt(endHourStr.split(' ')[0], 10);
+                const endMinStr = endTime.split(':')[1]?.substring(0, 2) || '0';
+                const endMin = parseInt(endMinStr, 10);
+
+                if (endMin === 0) {
+                    endIndex -= (endHour > (schedule[0]?.slot?.split('-')[0]?.split(':')[0] || 8) ? 0 : 0);
+                } else if (endMin === 45) {
+                    endIndex += 1;
+                } else if (endMin === 15) {
+                    endIndex -= 1;
+                }
+
+                days.forEach(day => {
+                const dayLower = day.toLowerCase().substring(0, 3);
+                for (let i = startIndex; i < endIndex; i++) {
+                    if (updatedSchedule[i] && updatedSchedule[i].hasOwnProperty(dayLower)) {
+                        if (i === startIndex) {
+                            updatedSchedule[i][dayLower] = [true, className]; // Mark start + store name
+                        } 
+                        else {
+                            updatedSchedule[i][dayLower] = [className]; // Normal timeslot
+                        }
+                    }    
+                }
+                });
+            })       
     
-            let startIndex = getSlotIndex(startTime);
-            let endIndex = getSlotIndex(endTime);
-    
-            const [endHourStr] = endTime.split(':');
-            const endHour = parseInt(endHourStr.split(' ')[0], 10);
-            const endMinStr = endTime.split(':')[1]?.substring(0, 2) || '0';
-            const endMin = parseInt(endMinStr, 10);
-    
-            if (endMin === 0) {
-                endIndex -= (endHour > (schedule[0]?.slot?.split('-')[0]?.split(':')[0] || 8) ? 0 : 0);
-            } else if (endMin === 45) {
-                endIndex += 1;
-            } else if (endMin === 15) {
-                endIndex -= 1;
-            }
-    
-            days.forEach(day => {
-            const dayLower = day.toLowerCase().substring(0, 3);
-            for (let i = startIndex; i < endIndex; i++) {
-                if (updatedSchedule[i] && updatedSchedule[i].hasOwnProperty(dayLower)) {
-                    if (i === startIndex) {
-                        updatedSchedule[i][dayLower] = [true, classname]; // Mark start + store name
-                    } 
-                    else {
-                        updatedSchedule[i][dayLower] = [classname]; // Normal timeslot
-                    }
-                }    
-            }
-            });
+            
         });
         editSchedule(updatedSchedule);
     }, [classes]);
@@ -121,18 +155,18 @@ const Schedule=()=>{
   const visibleSchedule = schedule.slice(firstClassIndex);
     return(
         <>
-        <div className='overflow-x-auto rounded-lg shadow-md'>
+        <div className='overflow-x-auto rounded-lg shadow-md '>
     <table className="min-w-full leading-normal">
         <thead>
             <tr className="bg-gray-100 text-gray-700">
-                <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">Time</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">Time</th>
                 {dayofWeek.map(day => (
-                    <th key={day} className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider">{day}</th>
+                    <th key={day} className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-[#EF601E]">{day}</th>
                 ))}
             </tr>
         </thead>
         <tbody>
-            {visibleSchedule.map((timeSlot, index) => (
+            {classes.length >0 ? visibleSchedule.map((timeSlot, index) => (
                 <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-900">{timeSlot.actual}</th>
                     <td className={`px-4 py-2 text-center text-sm ${timeSlot.sun[0] ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-600'}`}>
@@ -157,7 +191,8 @@ const Schedule=()=>{
                         {timeSlot.sat[1] ? timeSlot.sat[1] : ''}
                     </td>
                 </tr>
-            ))}
+            )): 
+            <tr><td colSpan="8" className="text-center py-4 text-xl text-gray-500 italic">No Classes...</td></tr>}
         </tbody>
     </table>
 </div>
