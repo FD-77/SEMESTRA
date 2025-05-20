@@ -7,7 +7,7 @@ import { FaRegUser } from "react-icons/fa";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import { BiLogOut } from "react-icons/bi";
 
-const Navbar = ({ isLoggedIn }) => {  // Accept isLoggedIn as prop
+const Navbar = ({ isLoggedIn }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
@@ -16,15 +16,11 @@ const Navbar = ({ isLoggedIn }) => {  // Accept isLoggedIn as prop
         window.location.href = '/login';
     };
 
-    // Public routes - always visible
-    const baseNavigation = [
-        { name: "CLASSES", href: "/classes", icon: TbCalendarTime },
-        { name: "GPA Calculator", href: "/gpaCalculator", icon: ImCalculator },
-    ];
-
-    // Auth-dependent routes
-    const authNavigation = isLoggedIn 
+    // Move base navigation into auth-dependent routes
+    const navigation = isLoggedIn 
         ? [
+            { name: "CLASSES", href: "/classes", icon: TbCalendarTime },
+            { name: "GPA Calculator", href: "/gpaCalculator", icon: ImCalculator },
             { name: "Profile", href: "/profile", icon: FaRegUser },
             { name: "Sign Out", href: "#", icon: BiLogOut, onClick: handleLogout }
         ]
@@ -32,8 +28,6 @@ const Navbar = ({ isLoggedIn }) => {  // Accept isLoggedIn as prop
             { name: "Login", href: "/login", icon: FaRegUser },
             { name: "Sign Up", href: "/register", icon: FaRegUser }
         ];
-
-    const navigation = [...baseNavigation, ...authNavigation];
 
     return (
         <header className="relative">
@@ -59,7 +53,7 @@ const Navbar = ({ isLoggedIn }) => {  // Accept isLoggedIn as prop
                     </button>
 
                     {/* Desktop navigation */}
-                    <div className="hidden lg:flex lg:flex-1 lg:justify-between lg:items-center lg:pl-8">
+                    <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:pl-8 lg:gap-5">
                         {navigation.map((item) => (
                             <Link
                                 key={item.name}
