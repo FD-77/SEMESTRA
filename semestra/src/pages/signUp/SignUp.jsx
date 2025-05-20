@@ -1,7 +1,6 @@
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import { MdOutlineVisibilityOff, MdOutlineVisibility } from "react-icons/md";
-import "../login/login.css"; 
 
 const Register = () => {
     const { setIsLoggedIn } = useOutletContext();
@@ -62,114 +61,127 @@ const Register = () => {
     };
   
     return (
-      <>
-        <div className="auth-title">
-          <h1 className="mt-2 text-4xl font-medium tracking-tight text-pretty text-black sm:text-3xl sm:text-balance">
-            Register
-          </h1>
-        </div>
-  
-        <div className="auth-form-container">
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {/* Username */}
-            <span className="self-start font-bold text-left text-xl mb-1 text-stone-950">
-              Username
-            </span>
-            <input
-              name="username"
-              placeholder="Username"
-              onChange={handleInput}
-              className="auth-input"
-            />
-            {errors.username && (
-              <span className="text-danger">{errors.username}</span>
-            )}
-  
-            {/* Email */}
-            <span className="self-start font-bold text-left text-xl mb-1 text-stone-950">
-              Email
-            </span>
-            <input
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              onChange={handleInput}
-              className="auth-input"
-            />
-            {errors.email && (
-              <span className="text-danger">{errors.email}</span>
-            )}
-  
-            {/* Password */}
-            <span className="self-start font-bold text-left text-xl mb-1 text-stone-950">
-              Password
-            </span>
-            <div className="password-wrapper">
-              <input
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                onChange={handleInput}
-                className="auth-input"
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <MdOutlineVisibilityOff /> : <MdOutlineVisibility />}
-              </button>
+        <div className="w-full max-w-md mx-auto mb-8">
+            <h1 className="text-4xl font-bold text-[#EF601E] text-center mb-8">
+                Sign Up
+            </h1>
+
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Username Field */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-gray-700">
+                            Username
+                        </label>
+                        <input
+                            type="text"
+                            name="username"
+                            onChange={handleInput}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            placeholder="Enter your username"
+                        />
+                        {errors.username && (
+                            <p className="text-red-500 text-sm">{errors.username}</p>
+                        )}
+                    </div>
+
+                    {/* Email Field */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-gray-700">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            onChange={handleInput}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            placeholder="you@example.com"
+                        />
+                        {errors.email && (
+                            <p className="text-red-500 text-sm">{errors.email}</p>
+                        )}
+                    </div>
+
+                    {/* Password Field */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-gray-700">
+                            Password
+                        </label>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                onChange={handleInput}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Enter your password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                                {showPassword ? <MdOutlineVisibilityOff size={20}/> : <MdOutlineVisibility size={20}/>}
+                            </button>
+                        </div>
+                        {errors.password && (
+                            <p className="text-red-500 text-sm">{errors.password}</p>
+                        )}
+                    </div>
+
+                    {/* Confirm Password Field */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-gray-700">
+                            Confirm Password
+                        </label>
+                        <div className="relative">
+                            <input
+                                type={showConfirm ? "text" : "password"}
+                                name="confirmPassword"
+                                onChange={handleInput}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Confirm your password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirm(!showConfirm)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                aria-label={showConfirm ? "Hide password" : "Show password"}
+                            >
+                                {showConfirm ? <MdOutlineVisibilityOff size={20}/> : <MdOutlineVisibility size={20}/>}
+                            </button>
+                        </div>
+                        {errors.confirmPassword && (
+                            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+                        )}
+                    </div>
+
+                    {/* Error Message */}
+                    {errors.form && (
+                        <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm">
+                            {errors.form}
+                        </div>
+                    )}
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition-colors duration-200"
+                    >
+                        Sign Up
+                    </button>
+                </form>
+
+                {/* Login Link */}
+                <p className="mt-4 text-center text-gray-600">
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-purple-500 hover:text-purple-700 font-semibold">
+                        Log in here
+                    </Link>
+                </p>
             </div>
-            {errors.password && (
-              <span className="text-danger">{errors.password}</span>
-            )}
-  
-            {/* Confirm Password */}
-            <span className="self-start font-bold text-left text-xl mb-1 text-stone-950">
-              Confirm Password
-            </span>
-            <div className="password-wrapper">
-              <input
-                name="confirmPassword"
-                type={showConfirm ? "text" : "password"}
-                placeholder="Confirm Password"
-                onChange={handleInput}
-                className="auth-input"
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowConfirm((v) => !v)}
-                aria-label={showConfirm ? "Hide password" : "Show password"}
-              >
-                {showConfirm ? <MdOutlineVisibilityOff /> : <MdOutlineVisibility />}
-              </button>
-            </div>
-            {errors.confirmPassword && (
-              <span className="text-danger">{errors.confirmPassword}</span>
-            )}
-  
-            {/* Form-level error */}
-            {errors.form && <div className="text-danger mt-2">{errors.form}</div>}
-  
-            {/* Submit */}
-            <div className="auth-submit-container">
-              <input
-                type="submit"
-                value="Register"
-                className="auth-submit-button"
-              />
-            </div>
-          </form>
         </div>
-  
-        <div className="auth-redirect">
-          Already have an account?&nbsp;
-          <Link to="/login">Log in here</Link>
-        </div>
-      </>
     );
-  };
+};
   
-  export default Register;
+export default Register;
