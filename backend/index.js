@@ -24,6 +24,16 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Add a root route handler
+app.get('/', (req, res) => {
+    res.json({ status: 'API is running' });
+});
+
+// Add a health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'healthy' });
+});
+
 // Connect to MongoDB
 async function connectDB() {
     try {
