@@ -9,6 +9,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom'; // Add this import at the top
 
+
 const Main = () => {
   const navigate = useNavigate(); // Add this hook
   const [hasClasses, setHasClasses] = useState(true); // Add this state
