@@ -24,7 +24,7 @@ const ClassDetail = () => {
         const fetchClassData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/class-detail/${id}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/class-detail/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -60,7 +60,7 @@ const ClassDetail = () => {
         const fetchTasks = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/tasks/class/${id}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/class/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -83,7 +83,7 @@ const ClassDetail = () => {
     const handleToggleTask = async (taskId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/tasks/${taskId}/toggle`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}/toggle`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -108,7 +108,7 @@ const ClassDetail = () => {
     const handleUpdateTasks = async (updatedTask) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/tasks/${updatedTask._id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${updatedTask._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ const ClassDetail = () => {
     const handleDeleteTask = async (taskId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/tasks/${taskId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
