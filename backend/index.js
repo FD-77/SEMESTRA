@@ -19,9 +19,13 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://semestra-seven.vercel.app',
-        'https://semestra.vercel.app/'
+        'https://semestra.vercel.app',
+        'https://semestra-3y2l0hxqd-fatoumata-drammehs-projects.vercel.app',
+        'https://semestra-git-main-fatoumata-drammehs-projects.vercel.app'
     ],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
