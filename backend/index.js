@@ -19,7 +19,7 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://semestra-seven.vercel.app',
-        'https://semestra-backend-git-main-fatoumata-drammehs-projects.vercel.app/'
+        'https://semestra.vercel.app/'
     ],
     credentials: true
 }));

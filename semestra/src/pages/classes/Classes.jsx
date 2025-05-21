@@ -17,7 +17,7 @@ const Classes = () => {
         const fetchClasses = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/classes', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -36,7 +36,7 @@ const Classes = () => {
     const handleDeleteClass = async (id) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/classes/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -65,7 +65,7 @@ const Classes = () => {
                 userId: user.id
             };
 
-            const response = await fetch(`http://localhost:3000/api/classes/${classData._id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes/${classData._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const Classes = () => {
             const token = localStorage.getItem('token');
             
             // Get all classes for this semester
-            const response = await fetch('http://localhost:3000/api/classes', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -153,7 +153,7 @@ const Classes = () => {
                 const gpa = totalCredits > 0 ? (totalQualityPoints / totalCredits).toFixed(2) : 'N/A';
 
                 // Save semester GPA
-                await fetch('http://localhost:3000/api/semesters', {
+                await fetch(`${import.meta.env.VITE_API_URL}/api/semesters`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ const Classes = () => {
                 userId: user.id
             };
 
-            const response = await fetch('http://localhost:3000/api/classes', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

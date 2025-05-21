@@ -54,7 +54,7 @@ const GPACalculator = () => {
         const fetchClasses = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/classes', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -84,7 +84,7 @@ const GPACalculator = () => {
             
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/classes/${activeClassId}/gpa-data`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes/${activeClassId}/gpa-data`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -135,7 +135,7 @@ const GPACalculator = () => {
             const saveNewClass = async () => {
                 try {
                     const token = localStorage.getItem('token');
-                    const response = await fetch('http://localhost:3000/api/classes', {
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -356,7 +356,7 @@ const GPACalculator = () => {
 
             // Only update grade if we have a valid letter grade
             if (letterGrade) {
-                const gradeUpdateResponse = await fetch(`http://localhost:3000/api/classes/${activeClassId}`, {
+                const gradeUpdateResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/classes/${activeClassId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -390,7 +390,7 @@ const GPACalculator = () => {
                 try {
                     const token = localStorage.getItem('token');
                     // First fetch the existing semester GPA
-                    const semesterResponse = await fetch('http://localhost:3000/api/semesters', {
+                    const semesterResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/semesters`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -408,7 +408,7 @@ const GPACalculator = () => {
                     }
 
                     // Then fetch the classes
-                    const classResponse = await fetch('http://localhost:3000/api/classes', {
+                    const classResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -500,7 +500,7 @@ const GPACalculator = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/semesters', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/semesters`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -535,7 +535,7 @@ const GPACalculator = () => {
     const calculateCumulativeGPA = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/classes', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -578,7 +578,7 @@ const GPACalculator = () => {
 
                 // Save cumulative GPA to user profile
                 if (cumulative !== 'N/A') {
-                    const updateResponse = await fetch('http://localhost:3000/api/profile/gpa', {
+                    const updateResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/gpa`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',

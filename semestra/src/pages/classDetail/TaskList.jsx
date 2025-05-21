@@ -12,7 +12,7 @@ const TaskList = ({ tasks, onToggle, onUpdate, onDelete, classId }) => {
         if (newTaskTitle.trim()) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/tasks', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ const TaskList = ({ tasks, onToggle, onUpdate, onDelete, classId }) => {
         if (editingTask && editingTask.title.trim()) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/tasks/${editingTask.id}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tasks/${editingTask.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

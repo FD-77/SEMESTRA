@@ -44,7 +44,7 @@ const Main = () => {
   const fetchGPAs = async () => {
     try {
         // Fetch cumulative GPA
-        const cumulativeResponse = await fetch('http://localhost:3000/api/profile/gpa', {
+        const cumulativeResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/gpa`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -68,7 +68,7 @@ const Main = () => {
   //GET TASKS
   const fetchTasks = async () => {
     try{
-      const response= await fetch('http://localhost:3000/api/mainPage/getChecklist',{
+      const response= await fetch(`${import.meta.env.VITE_API_URL}/api/mainPage/getChecklist`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const Main = () => {
       return;
     }
     try{
-      const response=await fetch('http://localhost:3000/api/mainPage/addToChecklist',{
+      const response=await fetch(`${import.meta.env.VITE_API_URL}/api/mainPage/addToChecklist`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ const Main = () => {
    const markComIncom=async(index)=>{
     const taskId=tasks[index]._id;
     try{
-      const response=await fetch(`http://localhost:3000/api/mainPage/checklist/${taskId}/toggle`,{
+      const response=await fetch(`${import.meta.env.VITE_API_URL}/api/mainPage/checklist/${taskId}/toggle`,{
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const Main = () => {
   //Delete a Task
   const handleDeleteTask = async (taskId) => {
     try {
-        const response = await fetch(`http://localhost:3000/api/mainPage/deleteFromChecklist/${taskId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/mainPage/deleteFromChecklist/${taskId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -172,7 +172,7 @@ const Main = () => {
   //Edit a Task
   const handleEditTask = async (taskId, newName) => {
     try {
-        const response = await fetch(`http://localhost:3000/api/mainPage/checklist/${taskId}/name`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/mainPage/checklist/${taskId}/name`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,7 +199,7 @@ const Main = () => {
 
   const updateSemesterGPA = async (year, season) => {
     try {
-        const semesterResponse = await fetch('http://localhost:3000/api/semesters', {
+        const semesterResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/semesters`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -231,7 +231,7 @@ const Main = () => {
   const checkForClasses = async () => {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/classes', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
