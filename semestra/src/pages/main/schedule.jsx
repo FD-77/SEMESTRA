@@ -16,22 +16,6 @@ const years = Array.from({ length: 10 }, (_, i) => {
 const Schedule = ({ onSemesterChange }) => {
     const dayofWeek=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const times = [
-        { slot: "00:00-00:30", actual: "12:00 AM - 12:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "00:30-01:00", actual: "12:30 AM - 1:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "01:00-01:30", actual: "1:00 AM - 1:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "01:30-02:00", actual: "1:30 AM - 2:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "02:00-02:30", actual: "2:00 AM - 2:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "02:30-03:00", actual: "2:30 AM - 3:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "03:00-03:30", actual: "3:00 AM - 3:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "03:30-04:00", actual: "3:30 AM - 4:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "04:00-04:30", actual: "4:00 AM - 4:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "04:30-05:00", actual: "4:30 AM - 5:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "05:00-05:30", actual: "5:00 AM - 5:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "05:30-06:00", actual: "5:30 AM - 6:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "06:00-06:30", actual: "6:00 AM - 6:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "06:30-07:00", actual: "6:30 AM - 7:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "07:00-07:30", actual: "7:00 AM - 7:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
-        { slot: "07:30-08:00", actual: "7:30 AM - 8:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
         { slot: "08:00-08:30", actual: "8:00 AM - 8:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
         { slot: "08:30-09:00", actual: "8:30 AM - 9:00 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
         { slot: "09:00-09:30", actual: "9:00 AM - 9:30 AM", bg: "EF601E", sun: [], mon: [], tue: [], wed: [], thu: [], fri: [], sat: [] },
