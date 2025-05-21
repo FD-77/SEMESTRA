@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CustomSelect from "../../components/CustomSelect";  // Add this import
 
+
 const seasons = [
     { id: 'spring', name: 'Spring' },
     { id: 'summer', name: 'Summer' },
